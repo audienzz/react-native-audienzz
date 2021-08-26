@@ -1,11 +1,4 @@
-import { requireNativeComponent, ViewStyle } from 'react-native';
+import AppNexusBanner from './AppNexusBanner';
+import AppNexusVideoBanner from './AppNexusVideoBanner';
 
-type AudienzzProps = {
-  color: string;
-  style: ViewStyle;
-};
-
-export const AudienzzViewManager =
-  requireNativeComponent<AudienzzProps>('AudienzzView');
-
-export default AudienzzViewManager;
+export { AppNexusBanner, AppNexusVideoBanner };

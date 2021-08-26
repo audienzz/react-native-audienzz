@@ -32,7 +32,7 @@ interface bannerStyles {
 export type AppNexusBannerProps = {
   placementId: string;
   sizes: [[number, number]];
-  autoRefreshInterval: number;
+  autoRefreshInterval?: number;
   keywords?: object;
   onAdLoadSuccess?: () => void;
   onAdLoadFail?: (event: string | undefined) => void;

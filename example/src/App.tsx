@@ -1,12 +1,12 @@
 import * as React from 'react';
 
 import { StyleSheet, View } from 'react-native';
-import AudienzzViewManager from 'react-native-audienzz';
+import { AppNexusBanner } from 'react-native-audienzz';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <AudienzzViewManager color="#32a852" style={styles.box} />
+      <AppNexusBanner placementId="123" sizes={[[100, 200]]} />
     </View>
   );
 }

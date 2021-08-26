@@ -5,8 +5,7 @@ type AudienzzProps = {
   style: ViewStyle;
 };
 
-export const AudienzzViewManager = requireNativeComponent<AudienzzProps>(
-'AudienzzView'
-);
+export const AudienzzViewManager =
+  requireNativeComponent<AudienzzProps>('AudienzzView');
 
 export default AudienzzViewManager;

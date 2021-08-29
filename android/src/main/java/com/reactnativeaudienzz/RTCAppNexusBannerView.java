@@ -106,7 +106,7 @@ class RTCAppNexusBannerView extends ReactViewGroup {
                     });
                 }
             } else {
-                if (banner.getIsVisible() != Constants.BANNER_FULLY_VISIBLE) {
+                if (banner != null && banner.getIsVisible() != Constants.BANNER_FULLY_VISIBLE) {
                     onAdVisibleChange(Constants.BANNER_FULLY_VISIBLE);
                     banner.setIsVisible(Constants.BANNER_FULLY_VISIBLE);
                 }
@@ -120,12 +120,12 @@ class RTCAppNexusBannerView extends ReactViewGroup {
         Rect scrollBounds = new Rect();
         scrollView.getHitRect(scrollBounds);
         if (RTCAppNexusBannerView.this.getLocalVisibleRect(scrollBounds)) {
-            if (banner.getIsVisible() != Constants.BANNER_FULLY_VISIBLE) {
+            if (banner != null && banner.getIsVisible() != Constants.BANNER_FULLY_VISIBLE) {
                 onAdVisibleChange(Constants.BANNER_FULLY_VISIBLE);
                 banner.setIsVisible(Constants.BANNER_FULLY_VISIBLE);
             }
         } else {
-            if (banner.getIsVisible() != Constants.BANNER_NOT_VISIBLE) {
+            if (banner != null && banner.getIsVisible() != Constants.BANNER_NOT_VISIBLE) {
                 onAdVisibleChange(Constants.BANNER_NOT_VISIBLE);
                 banner.setIsVisible(Constants.BANNER_NOT_VISIBLE);
             }
@@ -150,7 +150,7 @@ class RTCAppNexusBannerView extends ReactViewGroup {
 
             @Override
             public void onAdLoaded(NativeAdResponse nativeAdResponse) {
-                onAdLoadSuccess(banner.getId(),banner.getCreativeWidth(),banner.getCreativeHeight(),banner.getAdResponseInfo().getCreativeId());
+                // onAdLoadSuccess(banner.getId(),banner.getCreativeWidth(),banner.getCreativeHeight(),banner.getAdResponseInfo().getCreativeId());
             }
 
             @Override

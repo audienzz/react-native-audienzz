@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-
-		5E555C0D2413F4C50049A1A2 /* Audienzz.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* Audienzz.m */; };
-
+		FA121A2026DC4A5000E6CCE8 /* RCTAppNexusVideoBannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA121A1B26DC4A5000E6CCE8 /* RCTAppNexusVideoBannerView.m */; };
+		FA121A2126DC4A5000E6CCE8 /* RCTAppNexusBannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = FA121A1C26DC4A5000E6CCE8 /* RCTAppNexusBannerView.m */; };
+		FA121A2226DC4A5000E6CCE8 /* RCTAppNexusVideoBannerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FA121A1E26DC4A5000E6CCE8 /* RCTAppNexusVideoBannerManager.m */; };
+		FA121A2326DC4A5000E6CCE8 /* RCTAppNexusBannerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FA121A1F26DC4A5000E6CCE8 /* RCTAppNexusBannerManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,10 +27,14 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libAudienzz.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAudienzz.a; sourceTree = BUILT_PRODUCTS_DIR; };
-
-		B3E7B5881CC2AC0600A0062D /* Audienzz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Audienzz.h; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* Audienzz.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Audienzz.m; sourceTree = "<group>"; };
-
+		FA121A1826DC4A5000E6CCE8 /* RCTAppNexusVideoBannerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTAppNexusVideoBannerManager.h; sourceTree = "<group>"; };
+		FA121A1926DC4A5000E6CCE8 /* RCTAppNexusBannerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTAppNexusBannerManager.h; sourceTree = "<group>"; };
+		FA121A1A26DC4A5000E6CCE8 /* RCTAppNexusVideoBannerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTAppNexusVideoBannerView.h; sourceTree = "<group>"; };
+		FA121A1B26DC4A5000E6CCE8 /* RCTAppNexusVideoBannerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAppNexusVideoBannerView.m; sourceTree = "<group>"; };
+		FA121A1C26DC4A5000E6CCE8 /* RCTAppNexusBannerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAppNexusBannerView.m; sourceTree = "<group>"; };
+		FA121A1D26DC4A5000E6CCE8 /* RCTAppNexusBannerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTAppNexusBannerView.h; sourceTree = "<group>"; };
+		FA121A1E26DC4A5000E6CCE8 /* RCTAppNexusVideoBannerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAppNexusVideoBannerManager.m; sourceTree = "<group>"; };
+		FA121A1F26DC4A5000E6CCE8 /* RCTAppNexusBannerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAppNexusBannerManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,10 +59,14 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-
-				B3E7B5881CC2AC0600A0062D /* Audienzz.h */,
-				B3E7B5891CC2AC0600A0062D /* Audienzz.m */,
-
+				FA121A1926DC4A5000E6CCE8 /* RCTAppNexusBannerManager.h */,
+				FA121A1F26DC4A5000E6CCE8 /* RCTAppNexusBannerManager.m */,
+				FA121A1D26DC4A5000E6CCE8 /* RCTAppNexusBannerView.h */,
+				FA121A1C26DC4A5000E6CCE8 /* RCTAppNexusBannerView.m */,
+				FA121A1826DC4A5000E6CCE8 /* RCTAppNexusVideoBannerManager.h */,
+				FA121A1E26DC4A5000E6CCE8 /* RCTAppNexusVideoBannerManager.m */,
+				FA121A1A26DC4A5000E6CCE8 /* RCTAppNexusVideoBannerView.h */,
+				FA121A1B26DC4A5000E6CCE8 /* RCTAppNexusVideoBannerView.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -119,9 +128,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-
-				B3E7B58A1CC2AC0600A0062D /* Audienzz.m in Sources */,
-
+				FA121A2126DC4A5000E6CCE8 /* RCTAppNexusBannerView.m in Sources */,
+				FA121A2026DC4A5000E6CCE8 /* RCTAppNexusVideoBannerView.m in Sources */,
+				FA121A2226DC4A5000E6CCE8 /* RCTAppNexusVideoBannerManager.m in Sources */,
+				FA121A2326DC4A5000E6CCE8 /* RCTAppNexusBannerManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,7 +244,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Audienzz;
 				SKIP_INSTALL = YES;
-
 			};
 			name = Debug;
 		};
@@ -251,7 +260,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Audienzz;
 				SKIP_INSTALL = YES;
-
 			};
 			name = Release;
 		};

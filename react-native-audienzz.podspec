@@ -16,5 +16,9 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm}"
 
   s.dependency "React-Core"
-  s.dependency "AppNexusSDK"
+  s.dependency "AppNexusSDK", "7.17.0"
+
+  s.prepare_command = <<-CMD
+    cp fix/ANMRAID.bundle/mraid.js ../../ios/Pods/AppNexusSDK/sdk/sourcefiles/Resources/ANMRAID.bundle/mraid.js
+  CMD
 end

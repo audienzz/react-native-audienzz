@@ -5,6 +5,7 @@ import {
   AppState,
   LayoutAnimation,
   Dimensions,
+  Platform,
 } from 'react-native';
 import {
   bannerEventChangeAction,
@@ -74,6 +75,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
    * This means the app became active again
    */
   useEffect(() => {
+    const { reactNativeVersion } = Platform.constants;
     const _handleAppStateChange = (nextAppState: string) => {
       if (nextAppState === 'active') {
         if (
@@ -88,10 +90,23 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
       }
     };
 
-    const listenerChange = AppState.addEventListener('change', _handleAppStateChange);
+    let changeListener: any;
+
+    if (reactNativeVersion.minor >= 66) {
+      changeListener = AppState.addEventListener(
+        'change',
+        _handleAppStateChange
+      );
+    } else {
+      AppState.addEventListener('change', _handleAppStateChange);
+    }
 
     return () => {
-      listenerChange.remove();
+      if (reactNativeVersion.minor >= 66 && changeListener) {
+        changeListener.remove();
+      } else {
+        AppState.removeEventListener('change', _handleAppStateChange);
+      }
     };
   }, [
     adRequestProcessed,

@@ -48,6 +48,8 @@ class RTCAppNexusBannerManager extends ViewGroupManager<RTCAppNexusBannerView> {
         return MapBuilder.<String, Object>builder()
                 .put("onAdLoadSuccess",
                         MapBuilder.of("registrationName", "onAdLoadSuccess"))
+                .put("onAdLazyLoadSuccess",
+                        MapBuilder.of("registrationName", "onAdLazyLoadSuccess"))
                 .put("onAdLoadFail",
                         MapBuilder.of("registrationName", "onAdLoadFail"))
                 .put("onEventChange",

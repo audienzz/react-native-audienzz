@@ -102,6 +102,7 @@ RCT_EXPORT_VIEW_PROPERTY(shouldResizeAdToFitContainer, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(allowVideo, BOOL)
 
 RCT_EXPORT_VIEW_PROPERTY(onAdLoadSuccess, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onAdLazyLoadSuccess, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdLoadFail, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onEventChange, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdVisibleChange, RCTDirectEventBlock)

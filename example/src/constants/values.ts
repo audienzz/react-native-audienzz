@@ -35,6 +35,12 @@ const ITEM_TYPES = {
   VIDEO_AD: 'VIDEO_AD',
 };
 
+const BANNER_VISIBLE_TYPES = {
+  0: 'BANNER_NOT_VISIBLE',
+  1: 'BANNER_PARTIALLY_VISIBLE',
+  2: 'BANNER_FULLY_VISIBLE',
+};
+
 const BANNER_ADS_PLACES: number[] = [2, 6, 10, 22];
 
 const VIDEO_ADS_PLACES: number[] = [];
@@ -56,4 +62,5 @@ export {
   ITEM_TYPES,
   BANNER_ADS_PLACES,
   VIDEO_ADS_PLACES,
+  BANNER_VISIBLE_TYPES,
 };

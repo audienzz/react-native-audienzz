@@ -13,7 +13,7 @@ import {
 } from './utils';
 import { BANNER_STATE_TYPE } from '../Constants';
 
-interface NativeEvent {
+interface INativeEvent {
   nativeEvent: {
     width?: number;
     height?: number;
@@ -81,10 +81,10 @@ export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
       }
     };
 
-    AppState.addEventListener('change', _handleAppStateChange);
+    const listenerChange = AppState.addEventListener('change', _handleAppStateChange);
 
     return () => {
-      AppState.removeEventListener('change', _handleAppStateChange);
+      listenerChange.remove();
     };
   }, [
     adRequestProcessed,
@@ -133,7 +133,7 @@ export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
    * The banner was loaded successfully, we are updating the data
    * @param event
    */
-  const onAdLoadSuccessHandler = (event: NativeEvent) => {
+  const onAdLoadSuccessHandler = (event: INativeEvent) => {
     setAdLoaded(true);
 
     if (
@@ -155,7 +155,7 @@ export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
    * Banner not loaded, hide the block
    * @param event
    */
-  const onAdLoadFailHandler = (event: NativeEvent) => {
+  const onAdLoadFailHandler = (event: INativeEvent) => {
     if (bannerVisible !== BANNER_STATE_TYPE.BANNER_NOT_VISIBLE) {
       setWidth(
         sizes[0] && sizes[0][0] ? sizes[0][0] : Dimensions.get('window').width
@@ -180,7 +180,7 @@ export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
    * Banner event handler
    * @param event
    */
-  const onEventChangeHandler = (event: NativeEvent) => {
+  const onEventChangeHandler = (event: INativeEvent) => {
     const eventType: string = bannerEventChangeAction(
       Number(event.nativeEvent.eventType)
     );
@@ -191,7 +191,7 @@ export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
    * Banner visibility handler
    * @param event
    */
-  const onAdVisibleChangeHandler = (event: NativeEvent) => {
+  const onAdVisibleChangeHandler = (event: INativeEvent) => {
     const visible: number = event.nativeEvent.visible
       ? event.nativeEvent.visible
       : BANNER_STATE_TYPE.BANNER_NOT_VISIBLE;

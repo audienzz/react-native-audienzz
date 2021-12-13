@@ -14,7 +14,7 @@ import {
 } from './utils';
 import { BANNER_STATE_TYPE } from '../Constants';
 
-interface NativeEvent {
+interface INativeEvent {
   nativeEvent: {
     width?: number;
     height?: number;
@@ -35,6 +35,7 @@ export type AppNexusBannerProps = {
   autoRefreshInterval?: number;
   keywords?: object;
   onAdLoadSuccess?: () => void;
+  onAdLazyLoadSuccess?: () => void;
   onAdLoadFail?: (event: string | undefined) => void;
   onEventChange?: (event: string | undefined) => void;
   allowVideo?: boolean;
@@ -48,6 +49,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
   autoRefreshInterval,
   keywords,
   onAdLoadSuccess,
+  onAdLazyLoadSuccess,
   onAdLoadFail,
   onEventChange,
   allowVideo,
@@ -86,10 +88,10 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
       }
     };
 
-    AppState.addEventListener('change', _handleAppStateChange);
+    const listenerChange = AppState.addEventListener('change', _handleAppStateChange);
 
     return () => {
-      AppState.removeEventListener('change', _handleAppStateChange);
+      listenerChange.remove();
     };
   }, [
     adRequestProcessed,
@@ -138,7 +140,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
    * The banner was loaded successfully, we are updating the data
    * @param event
    */
-  const onAdLoadSuccessHandler = (event: NativeEvent) => {
+  const onAdLoadSuccessHandler = (event: INativeEvent) => {
     setAdLoaded(true);
 
     if (
@@ -157,10 +159,32 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
   };
 
   /**
+   * The banner was lazy loaded successfully, we are updating the data
+   * @param event
+   */
+  const onAdLazyLoadSuccessHandler = (event: NativeEvent) => {
+    setAdLoaded(true);
+
+    if (
+      event.nativeEvent &&
+      event.nativeEvent.height &&
+      event.nativeEvent.width
+    ) {
+      setWidth(event.nativeEvent.width);
+      setHeight(event.nativeEvent.height);
+      setAdRequestProcessed(true);
+    }
+
+    if (onAdLazyLoadSuccess) {
+      onAdLazyLoadSuccess();
+    }
+  };
+
+  /**
    * Banner not loaded, hide the block
    * @param event
    */
-  const onAdLoadFailHandler = (event: NativeEvent) => {
+  const onAdLoadFailHandler = (event: INativeEvent) => {
     if (bannerVisible !== BANNER_STATE_TYPE.BANNER_NOT_VISIBLE) {
       setWidth(
         sizes[0] && sizes[0][0] ? sizes[0][0] : Dimensions.get('window').width
@@ -185,7 +209,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
    * Banner event handler
    * @param event
    */
-  const onEventChangeHandler = (event: NativeEvent) => {
+  const onEventChangeHandler = (event: INativeEvent) => {
     const eventType: string = bannerEventChangeAction(
       Number(event.nativeEvent.eventType)
     );
@@ -196,7 +220,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
    * Banner visibility handler
    * @param event
    */
-  const onAdVisibleChangeHandler = (event: NativeEvent) => {
+  const onAdVisibleChangeHandler = (event: INativeEvent) => {
     const visible: number = event.nativeEvent.visible
       ? event.nativeEvent.visible
       : BANNER_STATE_TYPE.BANNER_NOT_VISIBLE;
@@ -222,6 +246,8 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
         ref={bannerRef}
         // @ts-ignore
         onAdLoadSuccess={onAdLoadSuccessHandler}
+        // @ts-ignore
+        onAdLazyLoadSuccess={onAdLazyLoadSuccessHandler}
         // @ts-ignore
         onAdLoadFail={onAdLoadFailHandler}
         style={bannerStyles}

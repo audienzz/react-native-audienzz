@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { AppNexusBanner } from 'react-native-audienzz';
 import { styles } from '../../constants';
+import { BANNER_VISIBLE_TYPES } from '../../constants/values';
 
 type State = {
   placementIdBanner: string;
@@ -32,9 +33,19 @@ const SimpleBannerScreen: FC<Props> = ({ navigation, placementIdBanner }) => {
           keywords={{
             environment: 'test',
           }}
-          onAdLoadSuccess={() => console.log('Loaded!')}
-          onAdLoadFail={() => console.log('Failed!')}
-          // allowVideo
+          allowVideo
+          onAdLoadSuccess={() =>
+            console.log(`Loaded!`)
+          }
+          onAdLazyLoadSuccess={() =>
+            console.log(`Lazy loaded!`)
+          }
+          onAdLoadFail={() => {
+            console.log(`Failed!`)
+          }}
+          onAdVisibleChange={(type) => {
+            console.log(`Visible banner! type:${BANNER_VISIBLE_TYPES[type]}`)
+          }}
         />
       </View>
     </View>

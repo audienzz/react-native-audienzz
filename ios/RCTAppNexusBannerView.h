@@ -24,6 +24,7 @@
 @property (nonatomic, readonly, weak) RCTBridge *bridge;
 
 @property (nonatomic, copy) RCTDirectEventBlock onAdLoadSuccess;
+@property (nonatomic, copy) RCTDirectEventBlock onAdLazyLoadSuccess;
 @property (nonatomic, copy) RCTDirectEventBlock onAdLoadFail;
 @property (nonatomic, copy) RCTDirectEventBlock onEventChange;
 @property (nonatomic, copy) RCTDirectEventBlock onAdVisibleChange;

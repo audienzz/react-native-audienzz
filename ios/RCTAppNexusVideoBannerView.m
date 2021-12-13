@@ -92,8 +92,6 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
     self.bannerView = [[ANInstreamVideoAd alloc] initWithPlacementId:_placementId];
     [self.bannerView loadAdWithDelegate:self];
     self.bannerView.clickThroughAction = ANClickThroughActionOpenSDKBrowser;
-
-    [self addSubview:self.bannerView];
 }
 
 - (void)react_updateClippedSubviewsWithClipRect:(CGRect)clipRect relativeToView:(UIView *)clipView
@@ -178,9 +176,8 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 //----------------------------- -o-
 - (void) adDidReceiveAd: (id<ANAdProtocol>)ad
 {
-    NSLog(@"adDidReceiveAd");
-
     _isLoaded = YES;
+    [self setNeedsLayout];
     CGSize size = CGSizeMake([_sizes[0][0] doubleValue], [_sizes[0][1] doubleValue]);
 
     if (_onAdLoadSuccess) {

@@ -149,9 +149,7 @@ class RTCAppNexusBannerView extends ReactViewGroup {
             }
 
             @Override
-            public void onAdLoaded(NativeAdResponse nativeAdResponse) {
-                // onAdLoadSuccess(banner.getId(),banner.getCreativeWidth(),banner.getCreativeHeight(),banner.getAdResponseInfo().getCreativeId());
-            }
+            public void onAdLoaded(NativeAdResponse nativeAdResponse) { }
 
             @Override
             public void onAdExpanded(AdView adView) {
@@ -175,7 +173,7 @@ class RTCAppNexusBannerView extends ReactViewGroup {
 
             @Override
             public void onLazyAdLoaded(AdView adView) {
-                onAdLoadSuccess(adView.getId(),banner.getAdWidth(),banner.getAdHeight(), adView.getAdResponseInfo().getCreativeId());
+                onAdLazyLoadSuccess(adView.getId(),banner.getAdWidth(),banner.getAdHeight(), adView.getAdResponseInfo().getCreativeId());
             }
         };
 
@@ -189,6 +187,15 @@ class RTCAppNexusBannerView extends ReactViewGroup {
         event.putInt("height",height);
 
         mEventEmitter.receiveEvent(this.getId(), "onAdLoadSuccess", event);
+    }
+
+    public void onAdLazyLoadSuccess(int id, int width, int height, String creativeId) {
+        WritableMap event = Arguments.createMap();
+        event.putString("creativeId",creativeId);
+        event.putInt("width",width);
+        event.putInt("height",height);
+
+        mEventEmitter.receiveEvent(this.getId(), "onAdLazyLoadSuccess", event);
     }
 
     public void onAdLoadFail(int id, String error) {

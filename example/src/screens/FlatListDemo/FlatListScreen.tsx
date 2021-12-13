@@ -16,6 +16,7 @@ import {
   ITEM_TYPES,
   BANNER_ADS_PLACES,
   VIDEO_ADS_PLACES,
+  BANNER_VISIBLE_TYPES,
   itemBanner,
 } from '../../constants/values';
 // @ts-ignore
@@ -67,7 +68,15 @@ const FlatListScreen: FC<Props> = ({
               onAdLoadSuccess={() =>
                 console.log(`Loaded! Item index = ${index}`)
               }
-              onAdLoadFail={() => console.log(`Failed! Item index = ${index}`)}
+              onAdLazyLoadSuccess={() =>
+                console.log(`Lazy loaded! Item index = ${index}`)
+              }
+              onAdLoadFail={() => {
+                console.log(`Failed! Item index = ${index}`)
+              }}
+              onAdVisibleChange={(type) => {
+                console.log(`Visible banner! Item index = ${index}, type:${BANNER_VISIBLE_TYPES[type]}`)
+              }}
             />
           </View>
         );

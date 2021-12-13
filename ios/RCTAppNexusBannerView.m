@@ -184,6 +184,7 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 - (void)adDidReceiveAd:(id)ad
 {
     _isLoaded = YES;
+    [self setNeedsLayout];
     CGSize actualSize = _bannerView.loadedAdSize;
 
     if (_onAdLoadSuccess) {
@@ -198,10 +199,11 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 - (void)lazyAdDidReceiveAd:(id)ad
 {
     _isLoaded = YES;
+    [self setNeedsLayout];
     CGSize actualSize = _bannerView.loadedAdSize;
 
-    if (_onAdLoadSuccess) {
-        _onAdLoadSuccess(@{
+    if (_onAdLazyLoadSuccess) {
+        _onAdLazyLoadSuccess(@{
                            @"width": [NSNumber numberWithUnsignedInt:actualSize.width],
                            @"height": [NSNumber numberWithUnsignedInt:actualSize.height],
                            @"creativeId": [ad creativeId],

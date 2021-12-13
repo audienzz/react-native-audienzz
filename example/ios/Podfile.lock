@@ -215,7 +215,7 @@ PODS:
     - React-jsi (= 0.64.2)
     - React-perflogger (= 0.64.2)
   - React-jsinspector (0.64.2)
-  - react-native-audienzz (0.1.0):
+  - react-native-audienzz (0.2.0):
     - AppNexusSDK
     - React-Core
   - react-native-safe-area-context (3.3.0):
@@ -456,7 +456,7 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
-  FBReactNativeSpec: cd550f0196570d86337b9168440edfdff2f836dd
+  FBReactNativeSpec: 79c53acb1f5a5624739156aad74e56ff46dec068
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
@@ -470,7 +470,7 @@ SPEC CHECKSUMS:
   React-jsi: 67747b9722f6dab2ffe15b011bcf6b3f2c3f1427
   React-jsiexecutor: 80c46bd381fd06e418e0d4f53672dc1d1945c4c3
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
-  react-native-audienzz: 79414c3602c8f69707f30d40d1ed404f08221f31
+  react-native-audienzz: fc0897aa862c3a41bb010cdac56b15ccd1334cc7
   react-native-safe-area-context: 61c8c484a3a9e7d1fda19f7b1794b35bbfd2262a
   React-perflogger: 25373e382fed75ce768a443822f07098a15ab737
   React-RCTActionSheet: af7796ba49ffe4ca92e7277a5d992d37203f7da5
@@ -493,6 +493,6 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Yoga: 575c581c63e0d35c9a83f4b46d01d63abc1100ac
 
-PODFILE CHECKSUM: 76e9597cf0a35bdd035b10799844d7dd3eb86699
+PODFILE CHECKSUM: 6c335ad3fb6059fc8ccbf2cb4624276fdc5b0ce6
 
 COCOAPODS: 1.10.1

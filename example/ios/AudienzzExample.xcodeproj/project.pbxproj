@@ -118,7 +118,6 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				C1D60D28B925C94BD88E79D7 /* [CP] Copy Pods Resources */,
-				9B147440725FC82A8413B03C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -210,24 +209,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9B147440725FC82A8413B03C /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AudienzzExample/Pods-AudienzzExample-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OMSDK_Appnexus/OMSDK_Appnexus.framework/OMSDK_Appnexus",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OMSDK_Appnexus.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AudienzzExample/Pods-AudienzzExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		C1D60D28B925C94BD88E79D7 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -235,80 +216,10 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AudienzzExample/Pods-AudienzzExample-resources.sh",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANBrowserViewController.xib",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANBrowserViewController_SizeClasses.xib",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANInterstitialAdViewController.xib",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/anjam.js",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANMRAID.bundle/mraid.js",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ASTMediationManager.js",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/errors.strings",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/an_arrow_left.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/an_arrow_left@2x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/an_arrow_left@3x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/an_arrow_right.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/an_arrow_right@2x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/an_arrow_right@3x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/appnexus_logo_icon.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/appnexus_logo_icon@2x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/compass.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/compass@2x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/compass@3x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/interstitial_closebox.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/interstitial_closebox@2x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/interstitial_flat_closebox.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/interstitial_flat_closebox@2x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/interstitial_flat_closebox@3x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/UIButtonBarArrowLeft.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/UIButtonBarArrowLeft@2x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/UIButtonBarArrowRight.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/UIButtonBarArrowRight@2x.png",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/MobileVastPlayer.js",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/nativeRenderer.html",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/omsdk.js",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/optionsparser.js",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/sdkjs.js",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/vastVideo.html",
-				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANMRAID.bundle",
-				"${PODS_ROOT}/AppNexusSDK/sdk/AppNexusSDK/SDK-Info.plist",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ANBrowserViewController.nib",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ANBrowserViewController_SizeClasses.nib",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ANInterstitialAdViewController.nib",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/anjam.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/mraid.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ASTMediationManager.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/errors.strings",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_left.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_left@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_left@3x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_right.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_right@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_right@3x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/appnexus_logo_icon.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/appnexus_logo_icon@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/compass.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/compass@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/compass@3x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/interstitial_closebox.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/interstitial_closebox@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/interstitial_flat_closebox.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/interstitial_flat_closebox@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/interstitial_flat_closebox@3x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowLeft.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowLeft@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowRight.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowRight@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MobileVastPlayer.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/nativeRenderer.html",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/omsdk.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/optionsparser.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/sdkjs.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/vastVideo.html",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ANMRAID.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDK-Info.plist",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -91,8 +91,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
     };
 
     let changeListener: any;
-
-    if (reactNativeVersion.minor >= 66) {
+    if (reactNativeVersion.minor >= 65) {
       changeListener = AppState.addEventListener(
         'change',
         _handleAppStateChange
@@ -102,7 +101,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
     }
 
     return () => {
-      if (reactNativeVersion.minor >= 66 && changeListener) {
+      if (reactNativeVersion.minor >= 65 && changeListener) {
         changeListener.remove();
       } else {
         AppState.removeEventListener('change', _handleAppStateChange);

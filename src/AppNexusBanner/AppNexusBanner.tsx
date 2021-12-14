@@ -177,7 +177,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
    * The banner was lazy loaded successfully, we are updating the data
    * @param event
    */
-  const onAdLazyLoadSuccessHandler = (event: NativeEvent) => {
+  const onAdLazyLoadSuccessHandler = (event: INativeEvent) => {
     setAdLoaded(true);
 
     if (

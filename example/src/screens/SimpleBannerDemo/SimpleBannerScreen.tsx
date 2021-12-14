@@ -34,17 +34,14 @@ const SimpleBannerScreen: FC<Props> = ({ navigation, placementIdBanner }) => {
             environment: 'test',
           }}
           allowVideo
-          onAdLoadSuccess={() =>
-            console.log(`Loaded!`)
-          }
-          onAdLazyLoadSuccess={() =>
-            console.log(`Lazy loaded!`)
-          }
+          onAdLoadSuccess={() => console.log(`Loaded!`)}
+          onAdLazyLoadSuccess={() => console.log(`Lazy loaded!`)}
           onAdLoadFail={() => {
-            console.log(`Failed!`)
+            console.log(`Failed!`);
           }}
           onAdVisibleChange={(type) => {
-            console.log(`Visible banner! type:${BANNER_VISIBLE_TYPES[type]}`)
+            // @ts-ignore
+            console.log(`Visible banner! type:${BANNER_VISIBLE_TYPES[type]}`);
           }}
         />
       </View>

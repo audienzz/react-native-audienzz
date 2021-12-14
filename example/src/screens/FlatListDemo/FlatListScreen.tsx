@@ -72,10 +72,15 @@ const FlatListScreen: FC<Props> = ({
                 console.log(`Lazy loaded! Item index = ${index}`)
               }
               onAdLoadFail={() => {
-                console.log(`Failed! Item index = ${index}`)
+                console.log(`Failed! Item index = ${index}`);
               }}
-              onAdVisibleChange={(type) => {
-                console.log(`Visible banner! Item index = ${index}, type:${BANNER_VISIBLE_TYPES[type]}`)
+              onAdVisibleChange={(visibilityType: number | undefined) => {
+                console.log(
+                  `Visible banner! Item index = ${index}, type:${
+                    // @ts-ignore
+                    visibilityType && BANNER_VISIBLE_TYPES[visibilityType]
+                  }`
+                );
               }}
             />
           </View>

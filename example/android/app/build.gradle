@@ -127,6 +127,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
     defaultConfig {
         applicationId "com.example.reactnativeaudienzz"
         minSdkVersion rootProject.ext.minSdkVersion

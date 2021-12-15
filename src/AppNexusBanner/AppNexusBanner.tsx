@@ -13,7 +13,10 @@ import {
   lazyLoadAdBanner,
   viewLazyAdBanner,
 } from './utils';
-import { BANNER_STATE_TYPE } from '../Constants';
+import {
+  BANNER_STATE_TYPE,
+  MIN_RN_VERSION_STATE_LISTENER_REMOVE,
+} from '../Constants';
 
 interface INativeEvent {
   nativeEvent: {
@@ -91,7 +94,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
     };
 
     let changeListener: any;
-    if (reactNativeVersion.minor >= 65) {
+    if (reactNativeVersion.minor >= MIN_RN_VERSION_STATE_LISTENER_REMOVE) {
       changeListener = AppState.addEventListener(
         'change',
         _handleAppStateChange
@@ -101,7 +104,10 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
     }
 
     return () => {
-      if (reactNativeVersion.minor >= 65 && changeListener) {
+      if (
+        reactNativeVersion.minor >= MIN_RN_VERSION_STATE_LISTENER_REMOVE &&
+        changeListener
+      ) {
         changeListener.remove();
       } else {
         AppState.removeEventListener('change', _handleAppStateChange);

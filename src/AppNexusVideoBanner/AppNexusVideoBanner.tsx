@@ -12,7 +12,10 @@ import {
   loadAdVideoBanner,
   viewAdVideoBanner,
 } from './utils';
-import { BANNER_STATE_TYPE } from '../Constants';
+import {
+  BANNER_STATE_TYPE,
+  MIN_RN_VERSION_STATE_LISTENER_REMOVE,
+} from '../Constants';
 
 interface INativeEvent {
   nativeEvent: {
@@ -85,7 +88,7 @@ export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
 
     let changeListener: any;
 
-    if (reactNativeVersion.minor >= 66) {
+    if (reactNativeVersion.minor >= MIN_RN_VERSION_STATE_LISTENER_REMOVE) {
       changeListener = AppState.addEventListener(
         'change',
         _handleAppStateChange
@@ -95,7 +98,10 @@ export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
     }
 
     return () => {
-      if (reactNativeVersion.minor >= 66 && changeListener) {
+      if (
+        reactNativeVersion.minor >= MIN_RN_VERSION_STATE_LISTENER_REMOVE &&
+        changeListener
+      ) {
         changeListener.remove();
       } else {
         AppState.removeEventListener('change', _handleAppStateChange);

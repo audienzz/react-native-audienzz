@@ -19,6 +19,6 @@ Pod::Spec.new do |s|
   s.dependency "AppNexusSDK", "7.17.0"
 
   s.prepare_command = <<-CMD
-    cp fix/ANMRAID.bundle/mraid.js ../../ios/Pods/AppNexusSDK/sdk/sourcefiles/Resources/ANMRAID.bundle/mraid.js
+    sed -i'.original' -e 's/mraid.util.nativeCall(\\"mraid:\\/\\/audioVolumeChange\\/\\");/\\/\\/ mraid.util.nativeCall(\\"mraid:\\/\\/audioVolumeChange\\/\\");/g' ../../ios/Pods/AppNexusSDK/sdk/sourcefiles/Resources/ANMRAID.bundle/mraid.js
   CMD
 end

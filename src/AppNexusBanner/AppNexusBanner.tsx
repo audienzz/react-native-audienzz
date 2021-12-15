@@ -125,10 +125,16 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
    * Displaying the area for displaying the banner
    */
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setBannerStyles({ width, height });
     }, 300);
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
   }, [width, height]);
 
   /**

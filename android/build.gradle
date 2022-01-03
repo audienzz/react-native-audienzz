@@ -42,6 +42,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'src/main/sdk/src', 'src/main/instreamvideo/src/main/java']
+            res.srcDirs = ['src/main/sdk/res', 'src/main/instreamvideo/src/main/res']
+            manifest.srcFile 'src/main/sdk/AndroidManifest.xml'
+            assets.srcDir 'src/main/sdk/assets'
+            resources.srcDir 'src/main/sdk/src'
+        }
+    }
 }
 
 repositories {
@@ -53,7 +62,9 @@ repositories {
 }
 
 dependencies {
+    api fileTree(include: ['*.jar'], dir: 'src/main/sdk/libs')
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.appnexus.opensdk:appnexus-sdk:[7,8)'
-    implementation 'com.appnexus.opensdk:appnexus-instreamvideo:[7,8)'
+
+    implementation 'org.robolectric:robolectric:4.4'
+    implementation 'com.squareup.okhttp:mockwebserver:2.7.5'
 }

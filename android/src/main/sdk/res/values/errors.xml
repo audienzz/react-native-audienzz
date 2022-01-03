@@ -1,0 +1,165 @@
+<resources>
+	<string formatted="false" name="no_identification">E104: No identification set(either placement id or inventory code should be presented). onAdRequestFailed will not be called</string>
+	<string formatted="false" name="already_expanded">Cannot load a new ad while the current ad is expanded. onAdRequestFailed will not be called</string>
+	<string formatted="false" name="moot_restart">AdFetcher requested to start, but tasker already instantiated</string>
+	<string formatted="false" name="fetcher_start_single">AdFetcher starting in single-use mode</string>
+	<string formatted="false" name="handler_message_pass">AdRequest message passed to handler</string>
+	<string formatted="false" name="fetcher_start_auto">AdFetcher started in auto-refresh mode</string>
+	<string formatted="false" name="request_delayed_by_x_ms">Ad request will be delayed by %dms to account for idletime</string>
+	<string formatted="false" name="new_ad_since">Fetching a new ad for the first time in %dms</string>
+	<string formatted="false" name="permissions_missing_location">E100: Location permissions ACCESS_COARSE_LOCATION and/or ACCESS_FINE_LOCATION aren\'t set in the host app. This may affect demand.</string>
+	<string formatted="false" name="permissions_missing_network_state">E101: The SDK needs permission ACCESS_NETWORK_STATE in the host app.</string>
+	<string formatted="false" name="no_connectivity">E207: Abandoning AdRequest because there is no network connectivity.</string>
+	<string formatted="false" name="fetch_url">Fetching: %s</string>
+	<string formatted="false" name="http_unknown">E200: Couldn\'t reach the ad server even though network connectivity was detected. Is the server down?</string>
+	<string formatted="false" name="http_timeout">E201: Connection to ad server timed out.</string>
+	<string formatted="false" name="http_unreachable">E202: %s:%d is unreachable.</string>
+	<string formatted="false" name="http_io">E203: Ad couldn\'t be fetched due to io error, probably http related.</string>
+	<string formatted="false" name="http_url_malformed">E208: Ad Request url was malformed..</string>
+	<string formatted="false" name="permissions_internet">E102: The SDK needs permission INTERNET in the host app.</string>
+	<string formatted="false" name="unknown_exception">E204: Ad couldn\'t be fetched due to unknown exception, see above trace.</string>
+	<string formatted="false" name="http_ooo">Ad couldn\'t be fetched due to OutofMemory, see above trace.</string>
+	<string formatted="false" name="http_get_url_malformed">HTTPGET: failed, url was malformed..</string>
+	<string formatted="false" name="http_get_io">HTTPGET: failed due to io error, probably http related.</string>
+	<string formatted="false" name="http_get_unknown_exception">HTTPGET: failed due to unknown exception, see above trace.</string>
+	<string formatted="false" name="no_response">Request received no response from the server.</string>
+	<string formatted="false" name="response_body">Response body: %s</string>
+	<string formatted="false" name="response_header">Header: %s Value: %s</string>
+	<string formatted="false" name="response_blank">The server returned a blank 200 OK HTTP response.</string>
+	<string formatted="false" name="response_error">E301: The server replied with an error: %s</string>
+	<string formatted="false" name="response_no_ads">The server responded, but didn\'t return any ads.</string>
+	<string formatted="false" name="response_json_error">E300: There was an error parsing the JSON response: %s</string>
+	<string formatted="false" name="new_adview">new AdView()</string>
+	<string formatted="false" name="first_opensdk_launch">This is the first time OpenSDK has been launched in this app.</string>
+	<string formatted="false" name="not_first_opensdk_launch">This is not the first OpenSDK launch in this app</string>
+	<string formatted="false" name="ua">Your user agent string is: %s</string>
+	<string formatted="false" name="appid">Saving %s as your app-id</string>
+	<string formatted="false" name="making_adman">Making an AdFetcher to begin fetching ads</string>
+	<string formatted="false" name="adsize_too_big">E103: You requested an Ad larger than the measured ad space. Ad space size: %dx%d, request size: %dx%d</string>
+	<string formatted="false" name="screen_off_stop">Stopped ad requests since screen is off</string>
+	<string formatted="false" name="screen_on_start">Starting ad requests since screen is on</string>
+	<string formatted="false" name="start">Start fetching an ad</string>
+	<string formatted="false" name="stop">Stop fetching ads</string>
+	<string formatted="false" name="found_n_in_xml">Found %d variables to read from xml</string>
+	<string formatted="false" name="placement_id">Placement id:%s</string>
+	<string formatted="false" name="xml_set_period">Auto refresh interval set to %dms in xml</string>
+	<string formatted="false" name="xml_set_test">Test mode set to %b in xml</string>
+	<string formatted="false" name="xml_set_auto_refresh">Auto-refresh is set to %b in xml</string>
+	<string formatted="false" name="xml_set_should_reload">ShouldReloadOnResume is set to %b in xml</string>
+	<string formatted="false" name="xml_set_opens_native_browser">OpensNativeBrowser is set to %b in xml</string>
+	<string formatted="false" name="xml_ad_width">Ad width set to %d in xml</string>
+	<string formatted="false" name="xml_ad_height">Ad height set to %d in xml</string>
+    <string formatted="false" name="set_gender">setGender() to: %s</string>
+    <string formatted="false" name="get_gender">getGender() to: %s</string>
+	<string formatted="false" name="get_period">getAutoRefreshInterval() returned %d</string>
+	<string formatted="false" name="set_period">setAutoRefreshInterval() to: %d</string>
+	<string formatted="false" name="get_auto_refresh">getAutoRefresh() returned %b</string>
+	<string formatted="false" name="set_auto_refresh">setAutoRefresh() to: %b</string>
+	<string formatted="false" name="get_placement_id">getPlacementID() returned %s</string>
+	<string formatted="false" name="set_placement_id">setPlacementID() to: %s</string>
+	<string formatted="false" name="get_opens_native_browser">getOpensNativeBrowser() returned %b</string>
+	<string formatted="false" name="set_opens_native_browser">setOpensNativeBrowser() to: %b</string>
+	<string formatted="false" name="hidden">The AdView has been hidden.</string>
+	<string formatted="false" name="unhidden">The AdView has been unhidden.</string>
+	<string formatted="false" name="set_height">setAdHeight() to: %d</string>
+	<string formatted="false" name="set_width">setAdWidth() to: %d</string>
+	<string formatted="false" name="get_width">getAdWidth() returned %d</string>
+	<string formatted="false" name="get_height">getAdHeight() returned %d</string>
+	<string formatted="false" name="set_size">setAdSize() to: %dx%d</string>
+	<string formatted="false" name="init">The Mobile Advertising SDK is initializing</string>
+	<string formatted="false" name="get_should_resume">getShouldReloadOnResume() returned %b</string>
+	<string formatted="false" name="set_should_resume">setShouldReloadOnResume() to %b</string>
+	<string formatted="false" name="set_allow_video">setAllowVideo() to %b</string>
+	<string formatted="false" name="set_allow_banner">setAllowBanner() to %b</string>
+	<string formatted="false" name="set_allow_native">setAllowNative() to %b</string>
+	<string formatted="false" name="set_count_on_ad_load">setCountImpressionOnAdLoad() to %b</string>
+	<string formatted="false" name="webview_loading">WebView loading body: %s</string>
+	<string formatted="false" name="load_ad_int">loadAd() called for interstitial.</string>
+	<string formatted="false" name="set_ad_listener">setAdListener() called on AdView.</string>
+	<string formatted="false" name="get_ad_listener">getAdListener() called on AdView.</string>
+	<string formatted="false" name="show_int">show() called on interstitial.</string>
+	<string formatted="false" name="get_allowed_sizes">getAllowedSizes() called on interstitial.</string>
+	<string formatted="false" name="set_allowed_sizes">setAllowedSizes() called on interstitial.</string>
+	<string formatted="false" name="set_bg">setBackgroundColor() called on interstitial.</string>
+	<string formatted="false" name="get_bg">getBackgroundColor() called on interstitial.</string>
+	<string formatted="false" name="destroy_int">destroy() called on interstitial.</string>
+	<string formatted="false" name="empty_queue">show() was called, and wants an interstitial ad, but there are no valid interstitials in the queue. Load more?</string>
+	<string formatted="false" name="too_old">An interstitial ad was told to display, but is over the 60s age limit.</string>
+	<string formatted="false" name="webclient_error">E205: WebClient error: %d %s</string>
+	<string formatted="false" name="blank_ad">E302: The server returned an ad with the response, but it was blank. There is probably an issue with the creative.</string>
+	<string formatted="false" name="webview_received_error">E206: Error %d received, %s, while fetching url %s</string>
+	<string formatted="false" name="console_message">Received console message: %s at line %d with sourceId %s</string>
+	<string formatted="false" name="http_bad_status">HTTP response code %d, aborting.</string>
+	<string formatted="false" name="js_alert">Received javascript alert: %s while loading %s</string>
+	<string formatted="false" name="conversion_pixel">Firing pixel: %s</string>
+	<string formatted="false" name="conversion_pixel_success">Firing pixel succeeded</string>
+	<string formatted="false" name="conversion_pixel_fail">Install pixel failed to send.</string>
+	<string formatted="false" name="conversion_pixel_delay">Firing pixel did not succeed, retrying in %dms</string>
+	<string formatted="false" name="opening_inapp">Opening landing page in in-app browser</string>
+	<string formatted="false" name="opening_native">Opening landing page in native browser</string>
+	<string formatted="false" name="opening_native_current">Opening current page in native browser</string>
+	<string formatted="false" name="opening_app_store">AppStore URL detected, opening the page in the app store</string>
+	<string formatted="false" name="opening_url">Opening %s in in-app browser</string>
+	<string formatted="false" name="opening_url_failed">Failed to launch custom protocol: %s</string>
+	<string formatted="false" name="ignoring_url">Currently launching native intent. Ignoring url: %s</string>
+	<string formatted="false" name="mediation_instantiation_failure">Instantiating mediated ad failed due to %s</string>
+	<string formatted="false" name="csr_instantiation_failure">Instantiating csr ad failed due to %s</string>
+	<string formatted="false" name="mediation_adding_invalid">Adding %s to invalid networks list</string>
+	<string formatted="false" name="instantiating_class">Instantiating %s</string>
+	<string formatted="false" name="instance_exception">MediatedAdView is null or not an instance of %s</string>
+	<string formatted="false" name="mediated_request">Requesting a mediated ad.</string>
+	<string formatted="false" name="mediated_view_null">MediatedAdView was null</string>
+	<string formatted="false" name="mediated_request_exception">requestAd threw an exception</string>
+	<string formatted="false" name="mediated_request_error">requestAd threw an error</string>
+	<string formatted="false" name="mediated_request_null_activity">A mediated request was made with null activity parameter</string>
+	<string formatted="false" name="mediated_no_ads">The server responded with ads, but none were valid</string>
+	<string formatted="false" name="fire_cb_requester_null">firing result cb with null requester</string>
+	<string formatted="false" name="result_cb_bad_response">result cb returned a bad response</string>
+	<string formatted="false" name="result_cb_ignored">Ignored result cb received response</string>
+	<string formatted="false" name="fire_responseurl_null">cannot fire response url as current ad or the responseurl is null</string>
+	<string formatted="false" name="cancel_request">Cancelling scheduled request</string>
+	<string formatted="false" name="resize">MRAID resize() called with w:%d, h:%d, offset_x:%d, offset_y:%d, cust_close_position:%s, allow_offscreen:%b</string>
+	<string formatted="false" name="set_orientation_properties">MRAID setOrientationProperties called with allow_orientation_change=%b, orientation=%d</string>
+	<string formatted="false" name="create_calendar_event">MRAID createCalendarEvent() called</string>
+	<string formatted="false" name="unsupported_encoding">Cannot play video due to unsupported encoding</string>
+	<string formatted="false" name="play_vide_no_uri">MRAID playVideo() called, but no URI given</string>
+	<string formatted="false" name="store_picture_error">There was an error while storing picture.</string>
+	<string formatted="false" name="number_format">An invalid number was passed to an MRAID function.</string>
+	<string formatted="false" name="xml_resize_ad_to_fit_container">resizeAdToFitContainer set to %b in xml</string>
+	<string formatted="false" name="xml_set_expands_to_full_screen_width">setExpandsToFullScreenWidth set to %b in xml</string>
+	<string formatted="false" name="mediation_finish">Mediation Controller has finished.</string>
+	<string formatted="false" name="unsupported_mraid">Mraid function %s unsupported.</string>
+    <string name="no_user_interaction" formatted="false">Rejected %s becasue user did not interact with the webview</string>
+	<string formatted="false" name="request_parameter_override_attempt">Parameter %s cannot be overridden by custom keywords</string>
+	<string formatted="false" name="mediation_timeout">Mediation network timed out.</string>
+	<string formatted="false" name="fullscreen_video_show_error">Error showing custom fullscreen view</string>
+	<string formatted="false" name="fullscreen_video_hide_error">Error hiding custom fullscreen view</string>
+	<string formatted="false" name="adactivity_missing">%s was not detected in AndroidManifest.xml!</string>
+	<string formatted="false" name="adactivity_no_type">AdActivity launched with no type.</string>
+	<string formatted="false" name="max_size_not_set">overrideMaxSize enabled, but max size not set.</string>
+	<string formatted="false" name="set_max_size">setMaxSize() to %dx%d</string>
+	<string formatted="false" name="set_override_max_size">setOverrideMaxSize() to %b</string>
+	<string formatted="false" name="get_max_height">getMaxHeight() returned %d</string>
+	<string formatted="false" name="get_max_width">getMaxWidth() returned %d</string>
+	<string formatted="false" name="get_override_max_size">getOverrideMaxSize() returned %b</string>
+	<string formatted="false" name="no_size_info">An attempt to request an ad has been made with insufficient size information. Please provide a size, max size, or use fill_parent as the dimensions for your BannerAdView.</string>
+	<string formatted="false" name="show_loading_indicator_xml">showLoadingIndicator has been set in xml</string>
+    <string formatted="false" name="transition_type">transition type has been set in xml</string>
+    <string formatted="false" name="transition_direction">transition direction has been set in xml</string>
+    <string formatted="false" name="transition_duration">transition duration has been set in xml</string>
+	<string formatted="false" name="xml_load_landing_page_in_background">setDoesLoadingInBackground has been set to %b in xml</string>
+	<string formatted="false" name="set_ad_sizes">setAdSizes() called on banner.</string>
+	<string formatted="false" name="get_ad_sizes">getAdSizes() called on banner.</string>
+	<string formatted="false" name="set_ad_sizes_null">setAdSizes() called with null adSizes</string>
+	<string formatted="false" name="set_ad_sizes_no_elements">setAdSizes() called with empty adSizes</string>
+	<string formatted="false" name="apn_webview_failed_to_destroy">Webview destroy failed</string>
+	<string formatted="false" name="apn_omid_enable_failure">OMID is supported only on Android Kitkat or higher</string>
+	<string formatted="false" name="apn_load_webview_failure_disabled_lazy_load">loadLazyAd() failed, cannot be called when the lazy load isn\'t enabled.</string>
+	<string formatted="false" name="apn_load_webview_failure_repeated_loadLazyAd">loadLazyAd() failed, it has already been called once.</string>
+	<string formatted="false" name="apn_load_webview_failure_is_not_lazy_load">loadLazyAd() failed, the Ad isn\'t lazy loaded yet.</string>
+	<string formatted="false" name="apn_enable_lazy_webview_failure_request_in_progress">enableLazyLoad() failed, AdRequest is already in progress.</string>
+	<string formatted="false" name="apn_enable_lazy_webview_failure_already_enabled">enableLazyLoad() failed, Already enabled once.</string>
+	<string formatted="false" name="apn_enable_lazy_webview_failure_non_banner">loadLazyAd() failed, loadLazyAd can be applied only to the Banner Ad Type.</string>
+<string formatted="false" name="request_manager_owner_error">Request Manager can\'t proceed as it has <t></t>wo initialized owners</string>
+<string formatted="false" name="passed_context_error">Ad Request can\'t proceed without Activity Context</string>
+</resources>

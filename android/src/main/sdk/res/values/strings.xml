@@ -1,0 +1,41 @@
+<!--
+   Copyright 2013 APPNEXUS INC
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<resources>
+
+    <string name="app_name">OpenSDK</string>
+    <string name="License">PlaceHolder</string>
+    <string name="back">Navigate back.</string>
+    <string name="an_close_browser">Close browser.</string>
+    <string name="forward">Navigate forward.</string>
+    <string name="refresh">Refresh current page.</string>
+    <string name="store_picture_title">Store Picture?</string>
+    <string name="store_picture_message">"This Ad would like permission to save a picture."</string>
+    <string name="store_picture_accept">Accept</string>
+    <string name="store_picture_decline">Decline</string>
+    <string name="action_cant_be_completed">The requested action could not be completed.</string>
+    <string name="open_browser">Open current page in native browser</string>
+    <string name="html5_geo_permission_prompt">Would you like to allow this app to access your location?</string>
+    <string name="html5_geo_permission_prompt_title">%s would like to access your location</string>
+    <string name="fire_tracker_succesfully_message">Tracker fired successfully</string>
+    <string name="no_ad_url">No Ad Url</string>
+    <string name="notify_url">Notify URL</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
+    <string name="loading">Loading</string>
+    <string name="native_tag">View has been registered.</string>
+    <string name="native_view_tag">VisibilityListener</string>
+
+</resources>

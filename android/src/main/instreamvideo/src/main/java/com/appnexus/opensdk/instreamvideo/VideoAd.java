@@ -43,6 +43,7 @@ import com.appnexus.opensdk.ut.adresponse.BaseAdResponse;
 import com.appnexus.opensdk.ut.adresponse.RTBVASTAdResponse;
 import com.appnexus.opensdk.utils.Clog;
 import com.appnexus.opensdk.viewability.ANOmidViewabilty;
+import com.appnexus.opensdk.R;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

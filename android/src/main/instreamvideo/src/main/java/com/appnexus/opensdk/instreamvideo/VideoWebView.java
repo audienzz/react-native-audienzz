@@ -53,6 +53,7 @@ import com.appnexus.opensdk.utils.Settings;
 import com.appnexus.opensdk.utils.ViewUtil;
 import com.appnexus.opensdk.utils.WebviewUtil;
 import com.appnexus.opensdk.viewability.ANOmidAdSession;
+import com.appnexus.opensdk.R;
 
 import org.json.JSONObject;
 import java.net.URLDecoder;
@@ -162,7 +163,11 @@ class VideoWebView extends WebView {
                 return false;
             }
             if (url.startsWith("video://")) {
-                dispatchNativeCallback(url);
+                try {
+                    dispatchNativeCallback(url);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
 

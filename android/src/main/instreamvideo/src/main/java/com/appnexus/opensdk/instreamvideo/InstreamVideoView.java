@@ -29,6 +29,7 @@ import com.appnexus.opensdk.VideoOrientation;
 import com.appnexus.opensdk.utils.AdvertisingIDUtil;
 import com.appnexus.opensdk.utils.Clog;
 import com.appnexus.opensdk.utils.Settings;
+import com.appnexus.opensdk.R;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

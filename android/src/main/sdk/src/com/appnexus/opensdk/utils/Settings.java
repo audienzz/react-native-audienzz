@@ -71,7 +71,7 @@ public class Settings {
     public boolean debug_mode = false; // This should always be false here.
     public String ua = null;
 
-    public final String sdkVersion = BuildConfig.VERSION_NAME;
+    public final String sdkVersion = "30";
 
 
     public String mcc;

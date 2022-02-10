@@ -15,7 +15,7 @@
 -->
 <resources>
 
-    <string name="app_name">InstreamVideo</string>
+    <string name="instream_app_name">InstreamVideo</string>
     <string name="instream_License">PlaceHolder</string>
     <string name="instream_back">Navigate back.</string>
     <string name="instream_forward">Navigate forward.</string>

@@ -62,7 +62,7 @@ import { AppNexusBanner } from 'react-native-audienzz';
 | `onAdVisibleChange` | A callback triggered when the visibility of the banner has been changed. Returns a visibility type (`0` - if banner is not visible, `1` - if banner is partially visible, `2` - If banner is fully visible  | No | Function | `(visibilityType: number) => console.log("The visibility has changed")` |
 | `onAdLoadFail` | A callback triggered when the ad request to the server has failed. | No | Function | `() => console.log("The ad hasn't been loaded")` |
 | `reloadOnAppStateChangeIfFailed` | Reloading ad if the app state has changed (background -> foreground). Works only if the ad is shown within the viewport and it is not loaded. Default: `false` | No | Boolean | `true` |
-
+| `customUserAgent` | For IOS only. This parameter sets a custom UserAgent to correctly display received ad blocks. | No | String | "" |
 
 ### AppNexusVideoBanner
 
@@ -98,7 +98,7 @@ import { AppNexusVideoBanner } from 'react-native-audienzz';
 | `onAdLoadSuccess` | A callback triggered when the ad is loaded and placed within the view. | No | Function | `() => console.log("The ad has been loaded")` |
 | `onAdVisibleChange` | A callback triggered when the visibility of the video banner has been changed. Returns a visibility type (`0` - if banner is not visible, `1` - if banner is partially visible, `2` - If banner is fully visible  | No | Function | `(visibilityType: number) => console.log("The visibility has changed")` |
 | `onAdLoadFail` | A callback triggered when the ad request to the server has failed. | No | Function | `() => console.log("The ad hasn't been loaded")` |
-
+| `customUserAgent` | For IOS only. This parameter sets a custom UserAgent to correctly display received ad blocks. | No | String | "" |
 
 
 ## Changelog

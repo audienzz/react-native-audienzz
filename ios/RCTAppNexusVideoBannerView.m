@@ -1,4 +1,6 @@
 #import "RCTAppNexusVideoBannerView.h"
+#import <AppNexusSDK/ANSDKSettings.h>
+#import "RCTAppNexusUtils.h"
 
 #if __has_include(<React/RCTBridgeModule.h>)
 #import <React/RCTBridgeModule.h>
@@ -71,7 +73,20 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 - (void)loadAdVideoBanner
 {
     NSLog(@"Zoftify - loadAdBanner");
-    [self createAdVideoBanner];
+
+    if (_customUserAgent != nil) {
+        ANSDKSettings *settings = [ANSDKSettings sharedInstance];
+        settings.customUserAgent = _customUserAgent;
+
+        [self createAdVideoBanner];
+    } else {
+        [RCTAppNexusUtils getUserAgent:^(NSString *userAgent) {
+            ANSDKSettings *settings = [ANSDKSettings sharedInstance];
+            settings.customUserAgent = userAgent;
+
+            [self createAdVideoBanner];
+        }];
+    }
 }
 
 - (void)viewAdVideoBanner

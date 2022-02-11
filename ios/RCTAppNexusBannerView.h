@@ -5,6 +5,7 @@
 #endif
 
 #import <AppNexusSDK/ANBannerAdView.h>
+#import <AppNexusSDK/ANVideoAdPlayer.h>
 
 @class RCTBridge;
 @class RCTAppNexusBannerView;
@@ -20,6 +21,7 @@
 @property (nonatomic) BOOL allowVideo;
 @property (nonatomic) NSNumber *reactTag;
 @property (nonatomic) NSString *bannerVisible;
+@property (nonatomic) NSString *customUserAgent;
 
 @property (nonatomic, readonly, weak) RCTBridge *bridge;
 

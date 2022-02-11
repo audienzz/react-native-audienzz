@@ -35,7 +35,7 @@ interface bannerStyles {
 
 export type AppNexusBannerProps = {
   placementId: string;
-  sizes: [[number, number]];
+  sizes: number[][];
   autoRefreshInterval?: number;
   keywords?: object;
   onAdLoadSuccess?: () => void;
@@ -45,6 +45,7 @@ export type AppNexusBannerProps = {
   allowVideo?: boolean;
   reloadOnAppStateChangeIfFailed?: boolean;
   onAdVisibleChange?: (event: number | undefined) => void;
+  customUserAgent?: string | undefined;
 };
 
 export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
@@ -59,6 +60,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
   allowVideo,
   reloadOnAppStateChangeIfFailed,
   onAdVisibleChange,
+  customUserAgent,
   ...props
 }) => {
   let bannerRef = useRef(null);
@@ -281,6 +283,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
         onEventChange={onEventChangeHandler}
         // @ts-ignore
         onAdVisibleChange={onAdVisibleChangeHandler}
+        customUserAgent={customUserAgent}
       />
     </>
   );

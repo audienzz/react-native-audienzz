@@ -3,7 +3,7 @@ import { UIManager, Platform, findNodeHandle } from 'react-native';
 import { BANNER_EVENT_TYPE_RAW, BANNER_EVENT_TYPE } from '../Constants';
 
 const removeBanner = (bannerRef: any) => {
-  if (bannerRef && Platform.OS === 'ios') {
+  if (bannerRef.current && Platform.OS === 'ios') {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(bannerRef.current),
       UIManager.getViewManagerConfig('RCTAppNexusVideoBanner').Commands
@@ -14,7 +14,7 @@ const removeBanner = (bannerRef: any) => {
 };
 
 const loadAdVideoBanner = (bannerRef: any) => {
-  if (bannerRef) {
+  if (bannerRef.current) {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(bannerRef.current),
       UIManager.getViewManagerConfig('RCTAppNexusVideoBanner').Commands
@@ -25,7 +25,7 @@ const loadAdVideoBanner = (bannerRef: any) => {
 };
 
 const viewAdVideoBanner = (bannerRef: any) => {
-  if (bannerRef) {
+  if (bannerRef.current) {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(bannerRef.current),
       UIManager.getViewManagerConfig('RCTAppNexusVideoBanner').Commands
@@ -36,7 +36,7 @@ const viewAdVideoBanner = (bannerRef: any) => {
 };
 
 const forceReloadBanner = (bannerRef: any) => {
-  if (bannerRef) {
+  if (bannerRef.current) {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(bannerRef.current),
       UIManager.getViewManagerConfig('RCTAppNexusVideoBanner').Commands

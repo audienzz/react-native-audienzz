@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm}"
 
   s.dependency "React-Core"
-  s.dependency "AppNexusSDK", "7.17.0"
+  s.dependency "AppNexusSDK"
 
   s.prepare_command = <<-CMD
     sed -i'.original' -e 's/mraid.util.nativeCall(\\"mraid:\\/\\/audioVolumeChange\\/\\");/\\/\\/ mraid.util.nativeCall(\\"mraid:\\/\\/audioVolumeChange\\/\\");/g' ../../ios/Pods/AppNexusSDK/sdk/sourcefiles/Resources/ANMRAID.bundle/mraid.js

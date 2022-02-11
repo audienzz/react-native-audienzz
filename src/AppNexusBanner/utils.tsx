@@ -3,7 +3,7 @@ import { UIManager, Platform, findNodeHandle } from 'react-native';
 import { BANNER_EVENT_TYPE_RAW, BANNER_EVENT_TYPE } from '../Constants';
 
 const removeBanner = (bannerRef: any) => {
-  if (bannerRef && Platform.OS === 'ios') {
+  if (bannerRef.current && Platform.OS === 'ios') {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(bannerRef.current),
       UIManager.getViewManagerConfig('RCTAppNexusBanner').Commands.removeBanner,
@@ -13,7 +13,7 @@ const removeBanner = (bannerRef: any) => {
 };
 
 const loadAdBanner = (bannerRef: any) => {
-  if (bannerRef) {
+  if (bannerRef.current) {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(bannerRef.current),
       UIManager.getViewManagerConfig('RCTAppNexusBanner').Commands.loadAdBanner,
@@ -23,7 +23,7 @@ const loadAdBanner = (bannerRef: any) => {
 };
 
 const lazyLoadAdBanner = (bannerRef: any) => {
-  if (bannerRef) {
+  if (bannerRef.current) {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(bannerRef.current),
       UIManager.getViewManagerConfig('RCTAppNexusBanner').Commands
@@ -34,7 +34,7 @@ const lazyLoadAdBanner = (bannerRef: any) => {
 };
 
 const viewLazyAdBanner = (bannerRef: any) => {
-  if (bannerRef) {
+  if (bannerRef.current) {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(bannerRef.current),
       UIManager.getViewManagerConfig('RCTAppNexusBanner').Commands
@@ -45,7 +45,7 @@ const viewLazyAdBanner = (bannerRef: any) => {
 };
 
 const forceReloadBanner = (bannerRef: any) => {
-  if (bannerRef) {
+  if (bannerRef.current) {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(bannerRef.current),
       UIManager.getViewManagerConfig('RCTAppNexusBanner').Commands

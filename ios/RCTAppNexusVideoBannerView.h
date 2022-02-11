@@ -18,7 +18,7 @@
 @property (nonatomic) NSDictionary *keywords;
 @property (nonatomic) BOOL shouldResizeAdToFitContainer;
 @property (nonatomic) NSNumber *reactTag;
-@property (nonatomic) NSString *bannerVisible;
+@property (nonatomic) NSString *customUserAgent;
 
 @property (strong, nonatomic)  ANInstreamVideoAd  *bannerView;
 @property (strong, nonatomic)  AVPlayer *videoContentPlayer;

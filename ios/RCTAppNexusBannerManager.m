@@ -100,6 +100,7 @@ RCT_EXPORT_VIEW_PROPERTY(autoRefreshInterval, double)
 RCT_EXPORT_VIEW_PROPERTY(keywords, NSDictionary)
 RCT_EXPORT_VIEW_PROPERTY(shouldResizeAdToFitContainer, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(allowVideo, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(customUserAgent, NSString *)
 
 RCT_EXPORT_VIEW_PROPERTY(onAdLoadSuccess, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdLazyLoadSuccess, RCTDirectEventBlock)

@@ -1,4 +1,6 @@
 #import "RCTAppNexusBannerView.h"
+#import <AppNexusSDK/ANSDKSettings.h>
+#import "RCTAppNexusUtils.h"
 
 #if __has_include(<React/RCTBridgeModule.h>)
 #import <React/RCTBridgeModule.h>
@@ -101,6 +103,22 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 }
 
 - (void)createAdBanner:(BOOL)enableLazyLoad {
+    if (_customUserAgent != nil) {
+        ANSDKSettings *settings = [ANSDKSettings sharedInstance];
+        settings.customUserAgent = _customUserAgent;
+
+        [self setAdBanner:enableLazyLoad];
+    } else {
+        [RCTAppNexusUtils getUserAgent:^(NSString *userAgent) {
+            ANSDKSettings *settings = [ANSDKSettings sharedInstance];
+            settings.customUserAgent = userAgent;
+
+            [self setAdBanner:enableLazyLoad];
+        }];
+    }
+}
+
+- (void)setAdBanner:(BOOL)enableLazyLoad {
     if (_isLoaded){
         return;
     }
@@ -144,7 +162,6 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 }
 
 - (void)setVisibleBanner:(CGRect)clipRect relativeToView:(UIView *)clipView {
-
     if (!_isLoaded) {
         return;
     }

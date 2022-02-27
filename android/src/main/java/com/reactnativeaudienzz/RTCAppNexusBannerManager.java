@@ -2,10 +2,7 @@ package com.reactnativeaudienzz;
 
 import android.util.Log;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
-// import android.support.annotation.NonNull;
-
 import com.appnexus.opensdk.ANClickThroughAction;
 import com.appnexus.opensdk.AdSize;
 import com.appnexus.opensdk.SDKSettings;
@@ -146,6 +143,15 @@ class RTCAppNexusBannerManager extends ViewGroupManager<RTCAppNexusBannerView> {
         if (banner != null) {
             banner.setAutoRefreshInterval(interval);
         }
+    }
+
+    @ReactProp(name = "percentVisibility")
+    public void setPercentVisibility(final RTCAppNexusBannerView bannerView, int percent) {
+      RTCAppNexusBanner banner = (RTCAppNexusBanner) bannerView.getChildAt(0);
+
+      if (banner != null) {
+        banner.setPercentVisibility(percent);
+      }
     }
 
     @Override

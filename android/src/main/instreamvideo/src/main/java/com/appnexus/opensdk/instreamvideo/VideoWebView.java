@@ -55,8 +55,9 @@ import com.appnexus.opensdk.utils.WebviewUtil;
 import com.appnexus.opensdk.viewability.ANOmidAdSession;
 import com.appnexus.opensdk.R;
 
+import org.json.JSONException;
 import org.json.JSONObject;
-import java.net.URLDecoder;
+
 import java.io.UnsupportedEncodingException;
 
 import static com.appnexus.opensdk.utils.WebviewUtil.isValidUrl;
@@ -163,11 +164,7 @@ class VideoWebView extends WebView {
                 return false;
             }
             if (url.startsWith("video://")) {
-                try {
-                    dispatchNativeCallback(url);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                dispatchNativeCallback(url);
                 return true;
             }
 
@@ -216,10 +213,11 @@ class VideoWebView extends WebView {
     }
 
 
-    private void dispatchNativeCallback(String url) throws UnsupportedEncodingException {
+    private void dispatchNativeCallback(String url) {
 
         url = url.replaceFirst("video://", "");
-        url = URLDecoder.decode(url, "UTF-8");
+
+        url = new String(Base64.decode(url, Base64.NO_WRAP));
 
         try {
 
@@ -276,8 +274,11 @@ class VideoWebView extends WebView {
                 return;
             }
 
-        } catch (Exception ex) {
+        } catch (JSONException ex) {
             Clog.e(Clog.videoLogTag, "Exception: JsonError::" + url);
+            handleVideoError();
+        } catch (Exception ex) {
+            Clog.e(Clog.videoLogTag, "Exception: Exception caught::" + url);
             return;
         }
     }

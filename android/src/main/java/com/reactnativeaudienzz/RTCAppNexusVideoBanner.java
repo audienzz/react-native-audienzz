@@ -20,82 +20,91 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
 public class RTCAppNexusVideoBanner extends FrameLayout {
-    private boolean isLoading = false;
-    private boolean isPlay = false;
-    private int isVisible = Constants.BANNER_NOT_VISIBLE;
-    private String placementId;
-    private ReadableMap mapWords;
-    private ReadableArray sizesAd;
+  private boolean isLoading = false;
+  private boolean isPlay = false;
+  private int isVisible = Constants.BANNER_NOT_VISIBLE;
+  private String placementId;
+  private ReadableMap mapWords;
+  private ReadableArray sizesAd;
+  private int percentVisibility = Constants.PERCENT_VISIBILITY;
 
-    public RTCAppNexusVideoBanner(Context context) {
-        super(context);
-    }
+  public RTCAppNexusVideoBanner(Context context) {
+    super(context);
+  }
 
-    public void setIsVisible(int isVisible) {
-        this.isVisible = isVisible;
-    }
+  public void setIsVisible(int isVisible) {
+    this.isVisible = isVisible;
+  }
 
-    public void setPlacementId(String placementId) {
-        this.placementId = placementId;
-    }
+  public void setPlacementId(String placementId) {
+    this.placementId = placementId;
+  }
 
-    public String getPlacementId() {
-        return this.placementId;
-    }
+  public String getPlacementId() {
+    return this.placementId;
+  }
 
-    public void setSetKeywords(ReadableMap map) {
-        this.mapWords = map;
-    }
+  public void setSetKeywords(ReadableMap map) {
+    this.mapWords = map;
+  }
 
-    public ReadableMap getKeywords() {
-        return this.mapWords;
-    }
+  public ReadableMap getKeywords() {
+    return this.mapWords;
+  }
 
-    public void setSizesAd(ReadableArray sizesAd) {
-        this.sizesAd = sizesAd;
-    }
+  public void setSizesAd(ReadableArray sizesAd) {
+    this.sizesAd = sizesAd;
+  }
 
-    public ReadableArray getSizesAd() {
-        return this.sizesAd;
-    }
+  public ReadableArray getSizesAd() {
+    return this.sizesAd;
+  }
 
-    public int getIsVisible() {
-        return this.isVisible;
-    }
+  public int getIsVisible() {
+    return this.isVisible;
+  }
 
-    public void setIsLoading(boolean isLoading) {
-        this.isLoading = isLoading;
-    }
+  public void setIsLoading(boolean isLoading) {
+    this.isLoading = isLoading;
+  }
 
-    public boolean getIsLoading() {
-        return this.isLoading;
-    }
+  public boolean getIsLoading() {
+    return this.isLoading;
+  }
 
-    public void setIsPlay(boolean isPlay) {
-        this.isPlay = isPlay;
-    }
+  public void setIsPlay(boolean isPlay) {
+    this.isPlay = isPlay;
+  }
 
-    public boolean getIsPlay() {
-        return this.isPlay;
-    }
+  public boolean getIsPlay() {
+    return this.isPlay;
+  }
 
+  public void setPercentVisibility(int percentVisibility) {
+    this.percentVisibility = percentVisibility;
+  }
+
+  public int getPercentVisibility() {
+    return this.percentVisibility;
+  }
+
+  @Override
+  public void requestLayout() {
+    super.requestLayout();
+    // The spinner relies on a measure + layout pass happening after it calls requestLayout().
+    // Without this, the widget never actually changes the selection and doesn't call the
+    // appropriate listeners. Since we override onLayout in our ViewGroups, a layout pass never
+    // happens after a call to requestLayout, so we simulate one here.
+    post(measureAndLayout);
+  }
+
+  private final Runnable measureAndLayout = new Runnable() {
     @Override
-    public void requestLayout() {
-        super.requestLayout();
-        // The spinner relies on a measure + layout pass happening after it calls requestLayout().
-        // Without this, the widget never actually changes the selection and doesn't call the
-        // appropriate listeners. Since we override onLayout in our ViewGroups, a layout pass never
-        // happens after a call to requestLayout, so we simulate one here.
-        post(measureAndLayout);
+    public void run() {
+      measure(
+        MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+        MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+      layout(getLeft(), getTop(), getRight(), getBottom());
     }
-
-    private final Runnable measureAndLayout = new Runnable() {
-        @Override
-        public void run() {
-            measure(
-                    MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
-            layout(getLeft(), getTop(), getRight(), getBottom());
-        }
-    };
+  };
 }

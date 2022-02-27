@@ -42,6 +42,7 @@ export type AppNexusVideoBannerProps = {
   reloadOnAppStateChangeIfFailed?: boolean;
   onAdVisibleChange?: (event: number | undefined) => void;
   customUserAgent?: string | undefined;
+  percentVisibility?: number | undefined;
 };
 
 export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
@@ -54,6 +55,7 @@ export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
   reloadOnAppStateChangeIfFailed,
   onAdVisibleChange,
   customUserAgent,
+  percentVisibility = 50,
   ...props
 }) => {
   let bannerRef = useRef(null);
@@ -148,6 +150,7 @@ export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
       viewAdVideoBanner(bannerRef);
     } else if (
       (isVisible === BANNER_STATE_TYPE.BANNER_PARTIALLY_VISIBLE ||
+        isVisible === BANNER_STATE_TYPE.BANNER_PERCENT_VISIBLE ||
         isVisible === BANNER_STATE_TYPE.BANNER_FULLY_VISIBLE) &&
       !adLoaded
     ) {
@@ -250,6 +253,7 @@ export const AppNexusVideoBanner: React.FC<AppNexusVideoBannerProps> = ({
       // @ts-ignore
       onAdVisibleChange={onAdVisibleChangeHandler}
       customUserAgent={customUserAgent}
+      percentVisibility={percentVisibility}
     />
   );
 };

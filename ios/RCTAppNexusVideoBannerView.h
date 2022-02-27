@@ -13,12 +13,13 @@
 
 @interface RCTAppNexusVideoBannerView : RCTView<ANInstreamVideoAdLoadDelegate, ANInstreamVideoAdPlayDelegate>
 
-@property (nonatomic) NSString *placementId;
+@property (nonatomic) NSString * _Nonnull placementId;
 @property (nonatomic) NSArray *sizes;
 @property (nonatomic) NSDictionary *keywords;
 @property (nonatomic) BOOL shouldResizeAdToFitContainer;
 @property (nonatomic) NSNumber *reactTag;
 @property (nonatomic) NSString *customUserAgent;
+@property (nonatomic) NSInteger * _Nullable percentVisibility;
 
 @property (strong, nonatomic)  ANInstreamVideoAd  *bannerView;
 @property (strong, nonatomic)  AVPlayer *videoContentPlayer;

@@ -12,7 +12,7 @@
 
 @interface RCTAppNexusBannerView : RCTView<ANBannerAdViewDelegate>
 
-@property (nonatomic) NSString *placementId;
+@property (nonatomic) NSString * _Nonnull placementId;
 @property (nonatomic) BOOL *lazyLoad;
 @property (nonatomic) NSArray *sizes;
 @property (nonatomic) double autoRefreshInterval;
@@ -22,6 +22,7 @@
 @property (nonatomic) NSNumber *reactTag;
 @property (nonatomic) NSString *bannerVisible;
 @property (nonatomic) NSString *customUserAgent;
+@property (nonatomic) NSInteger * _Nullable percentVisibility;
 
 @property (nonatomic, readonly, weak) RCTBridge *bridge;
 

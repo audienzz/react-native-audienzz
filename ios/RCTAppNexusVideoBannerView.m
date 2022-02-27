@@ -23,13 +23,15 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 
     BANNER_NOT_VISIBLE                 = 0,
     BANNER_PARTIALLY_VISIBLE           = 1,
-    BANNER_FULLY_VISIBLE               = 2
+    BANNER_PERCENT_VISIBLE             = 2,
+    BANNER_FULLY_VISIBLE               = 3
 };
 
 @implementation RCTAppNexusVideoBannerView
 {
     BOOL _isLoaded;
     NSInteger _isVisible;
+    BOOL _isSendNotification;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -42,6 +44,7 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 
     _isLoaded = NO;
     _isVisible = 0;
+    _isSendNotification = NO;
   }
 
   return self;
@@ -50,6 +53,11 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 - (void)dealloc
 {
     [self removeBanner];
+}
+
+- (void)layoutSubviews {
+    super.removeClippedSubviews = YES;
+    [super layoutSubviews];
 }
 
 - (void)removeBanner
@@ -111,45 +119,79 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 
 - (void)react_updateClippedSubviewsWithClipRect:(CGRect)clipRect relativeToView:(UIView *)clipView
 {
-    [self setVisibleBanner:clipRect relativeToView:clipView];
-}
-
-- (void)setVisibleBanner:(CGRect)clipRect relativeToView:(UIView *)clipView {
-
     if (!_isLoaded) {
         return;
     }
 
     clipRect = [clipView convertRect:clipRect toView:self];
-    clipRect = CGRectIntersection(clipRect, [UIScreen mainScreen].bounds);
+    clipRect = CGRectIntersection(clipRect, self.bounds);
+    clipView = self;
 
     if (!CGSizeEqualToSize(CGRectIntersection(clipRect, self.frame).size, CGSizeZero)) {
-        if (CGRectContainsRect(clipRect,_bannerView.frame)) {
-            // View is fully visible, so remount all subviews
+        if (!CGRectContainsRect(clipRect, self.frame)) {
+            [self calculationVisibilityVertical:clipRect];
+        } else {
             if (_isVisible != BANNER_FULLY_VISIBLE) {
                 _isVisible = BANNER_FULLY_VISIBLE;
+
+                if (_isSendNotification == NO) {
+                    _isSendNotification = YES;
+                    _onAdVisibleChange(@{@"visible": @(BANNER_PERCENT_VISIBLE)});
+                }
+
                 _onAdVisibleChange(@{@"visible": @(BANNER_FULLY_VISIBLE)});
-            }
-        } else {
-            // View is partially visible, so update clipped subviews
-            if (_isVisible != BANNER_PARTIALLY_VISIBLE) {
-                _isVisible = BANNER_PARTIALLY_VISIBLE;
-                _onAdVisibleChange(@{@"visible": @(BANNER_PARTIALLY_VISIBLE)});
             }
         }
     } else {
         if (_isVisible != BANNER_NOT_VISIBLE) {
+            _isSendNotification = NO;
             _isVisible = BANNER_NOT_VISIBLE;
             _onAdVisibleChange(@{@"visible": @(BANNER_NOT_VISIBLE)});
         }
     }
 }
 
-- (void)layoutSubviews
-{
-    super.removeClippedSubviews = YES;
-    [super layoutSubviews];
-    self.bannerView.frame = self.bounds;
+- (void) calculationVisibilityVertical:(CGRect)clipRect {
+    int percents = 0;
+
+    if (self.frame.size.height == clipRect.size.height) {
+        if (_isVisible != BANNER_FULLY_VISIBLE) {
+            _isVisible = BANNER_FULLY_VISIBLE;
+
+            if (_isSendNotification == NO) {
+                _isSendNotification = YES;
+                _onAdVisibleChange(@{@"visible": @(BANNER_PERCENT_VISIBLE)});
+            }
+
+            _onAdVisibleChange(@{@"visible": @(BANNER_FULLY_VISIBLE)});
+        }
+
+        return;
+    }
+
+    if (clipRect.origin.y > 0 && clipRect.size.height < self.frame.size.height) {
+        percents = (self.frame.size.height - clipRect.origin.y) * 100 / self.frame.size.height;
+        if (percents > 0) {
+            [self onPercentVisibility:percents];
+        }
+    } else if (clipRect.origin.y == 0 && clipRect.size.height > 0) {
+        percents = 100 - ((self.frame.size.height - clipRect.size.height) * 100 / self.frame.size.height);
+        if (percents > 0) {
+            [self onPercentVisibility:percents];
+        }
+    }
+}
+
+- (void) onPercentVisibility:(NSInteger)percents {
+    if (_isVisible != BANNER_PARTIALLY_VISIBLE) {
+        _isVisible = BANNER_PARTIALLY_VISIBLE;
+        _onAdVisibleChange(@{@"visible": @(BANNER_PARTIALLY_VISIBLE)});
+    }
+
+    if (percents > (NSInteger)_percentVisibility && _isSendNotification == NO && _isVisible == BANNER_PARTIALLY_VISIBLE) {
+        _isSendNotification = YES;
+        _onAdVisibleChange(@{@"visible": @(BANNER_PERCENT_VISIBLE)});
+    }
 }
 
 - (void)ad:(id)ad requestFailedWithError:(NSError *)error
@@ -164,7 +206,6 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
         }
     }
 }
-
 
 - (NSArray *)toCGSizes:(NSArray *)sizes
 {

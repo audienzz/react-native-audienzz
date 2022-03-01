@@ -1,6 +1,6 @@
 {
   "name": "react-native-audienzz",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "React Native implementation of the AppNexus (Xandr) ads",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -36,13 +36,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/audienzzag/react-native-audienzz",
+  "repository": "https://github.com/audienzz/react-native-audienzz",
   "author": "Audienzz <tech@audienzz.ch> (https://audienzz.ch)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/audienzzag/react-native-audienzz/issues"
+    "url": "https://github.com/audienzz/react-native-audienzz/issues"
   },
-  "homepage": "https://github.com/audienzzag/react-native-audienzz#readme",
+  "homepage": "https://github.com/audienzz/react-native-audienzz#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

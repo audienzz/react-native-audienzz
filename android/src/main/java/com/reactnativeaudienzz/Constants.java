@@ -17,6 +17,7 @@ public class Constants {
     public static final int BANNER_PARTIALLY_VISIBLE = 1;
     public static final int BANNER_PERCENT_VISIBLE = 2;
     public static final int BANNER_FULLY_VISIBLE = 3;
+    public static final int PERCENT_VISIBILITY = 50;
 
     //Video banner State
     public static final int VIDEO_PLAYBACK_STATE_ERROR = -1;

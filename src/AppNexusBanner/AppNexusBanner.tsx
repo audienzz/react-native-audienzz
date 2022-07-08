@@ -74,7 +74,8 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
   const [width, setWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
   const [bannerStyles, setBannerStyles] = useState<bannerStyles | null>({
-    width: 0, height: 0
+    width: 0,
+    height: 0,
   });
 
   /**
@@ -180,7 +181,10 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
     ) {
       setWidth(event.nativeEvent.width);
       setHeight(event.nativeEvent.height);
-      setBannerStyles({ width: event.nativeEvent.width, height: event.nativeEvent.height });
+      setBannerStyles({
+        width: event.nativeEvent.width,
+        height: event.nativeEvent.height,
+      });
       setAdRequestProcessed(true);
     }
 
@@ -203,7 +207,10 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
     ) {
       setWidth(event.nativeEvent.width);
       setHeight(event.nativeEvent.height);
-      setBannerStyles({ width: event.nativeEvent.width, height: event.nativeEvent.height });
+      setBannerStyles({
+        width: event.nativeEvent.width,
+        height: event.nativeEvent.height,
+      });
       setAdRequestProcessed(true);
     }
 

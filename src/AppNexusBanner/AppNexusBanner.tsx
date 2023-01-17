@@ -74,8 +74,8 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
   const [width, setWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
   const [bannerStyles, setBannerStyles] = useState<bannerStyles | null>({
-    width: 0,
-    height: 0,
+    width,
+    height,
   });
 
   /**
@@ -137,7 +137,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
   useEffect(() => {
     const timeout = setTimeout(() => {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setBannerStyles({ width: 0, height: 0 });
+      setBannerStyles({ width, height });
     }, 300);
 
     return () => {
@@ -233,7 +233,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
 
     setAdLoaded(false);
     setAdRequestProcessed(true);
-    setBannerStyles({ width: 0, height: 0 });
+    setBannerStyles({ width, height });
     setBannerVisible(BANNER_STATE_TYPE.BANNER_NOT_VISIBLE);
 
     if (onAdLoadFail) {

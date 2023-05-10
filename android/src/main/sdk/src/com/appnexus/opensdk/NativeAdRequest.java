@@ -77,39 +77,6 @@ public class NativeAdRequest implements Ad, MultiAd {
     }
 
     /**
-     * Retrieve the setting that determines whether or not the
-     * device's native browser is used instead of the in-app
-     * browser when the user clicks an ad.
-     *
-     * @return true if the device's native browser will be used; false otherwise.
-     * @deprecated Use getClickThroughAction instead
-     * Refer {@link ANClickThroughAction}
-     */
-    public boolean getOpensNativeBrowser() {
-        Clog.d(Clog.nativeLogTag, Clog.getString(
-                R.string.get_opens_native_browser, requestParameters.getOpensNativeBrowser()));
-        return requestParameters.getOpensNativeBrowser();
-    }
-
-    /**
-     * Set this to true to disable the in-app browser.  This will
-     * cause URLs to open in a native browser such as Chrome so
-     * that when the user clicks on an ad, your app will be paused
-     * and the native browser will open.  Set this to false to
-     * enable the in-app browser instead (a lightweight browser
-     * that runs within your app).  The default value is false.
-     *
-     * @param opensNativeBrowser (boolean)
-     * @deprecated Use setClickThroughAction instead
-     * Refer {@link ANClickThroughAction}
-     */
-    public void setOpensNativeBrowser(boolean opensNativeBrowser) {
-        Clog.d(Clog.nativeLogTag, Clog.getString(
-                R.string.set_opens_native_browser, opensNativeBrowser));
-        requestParameters.setOpensNativeBrowser(opensNativeBrowser);
-    }
-
-    /**
      * Sets the placement id of the NativeAdRequest. The placement ID
      * identifies the location in your application where ads will
      * be shown.  You must have a valid, active placement ID to
@@ -190,28 +157,6 @@ public class NativeAdRequest implements Ad, MultiAd {
                 R.string.get_placement_id, requestParameters.getPlacementID()));
         return requestParameters.getPlacementID();
     }
-
-    @Deprecated
-    /**
-     * Retrieve the externalUID that was previously set.
-     *
-     * @return externalUID.
-     */
-    public String getExternalUid() {
-        return requestParameters.getExternalUid();
-    }
-
-    @Deprecated
-    /**
-     * Set the current user's externalUID
-     *
-     * @param externalUid .
-     * @deprecated  Use ({@link SDKSettings}.setPublisherUserId)
-     */
-    public void setExternalUid(String externalUid) {
-        requestParameters.setExternalUid(externalUid);
-    }
-
 
     protected void setAllowedSizes() {
         Clog.d(Clog.nativeLogTag,
@@ -388,7 +333,7 @@ public class NativeAdRequest implements Ad, MultiAd {
 
     /**
      * @return Default int value 0, which indicates that renderer_id is not sent in the UT Request.
-     * @deprecated rendererId is not required anymore. Renderer to Placement mapping can now be done through Native Assembly in console.
+     *
      * <p>
      * Get the RendererId of the request
      */
@@ -398,7 +343,7 @@ public class NativeAdRequest implements Ad, MultiAd {
 
     /**
      * @param rendererId the Native Assembly renderer_id that is associated with this placement.
-     * @deprecated rendererId is not required anymore. Renderer to Placement mapping can now be done through Native Assembly in console.
+     *
      * <p>
      * Set the rendererId associated with placement.
      */
@@ -519,13 +464,12 @@ public class NativeAdRequest implements Ad, MultiAd {
         }
 
         private void processAdLoaded(AdResponse ad) {
-            if (!ad.getMediaType().equals(MediaType.NATIVE)) {
+            if (ad.getMediaType() != MediaType.NATIVE) {
                 onAdFailed(ResultCode.getNewInstance(ResultCode.INTERNAL_ERROR), null);
             } else {
                 final String IMAGE_URL = "image", ICON_URL = "icon";
                 final NativeAdResponse response = ad.getNativeAdResponse();
                 response.setAdResponseInfo(ad.getResponseData().getAdResponseInfo());
-                response.setCreativeId(ad.getResponseData().getAdResponseInfo().getCreativeId());
                 if (!loadImage && !loadIcon) {
                     if (listener != null) {
                         listener.onAdLoaded(response);
@@ -613,6 +557,11 @@ public class NativeAdRequest implements Ad, MultiAd {
         public void onAdClicked(String clickUrl) {
 
         }
+
+        @Override
+        public void onAdImpression() {
+            Clog.d(Clog.nativeLogTag, "onAdImpression");
+        }
     }
 
     @Override
@@ -651,6 +600,16 @@ public class NativeAdRequest implements Ad, MultiAd {
     @Override
     public MultiAd getMultiAd() {
         return this;
+    }
+
+    @Override
+    public Long getStartTime() {
+        return 0L;
+    }
+
+    @Override
+    public Long getFinishTime() {
+        return 0L;
     }
 
 }

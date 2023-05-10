@@ -18,20 +18,19 @@ package com.appnexus.opensdk.utils;
 
 import android.location.Location;
 import android.os.Build;
-import android.text.TextUtils;
-
-import com.appnexus.opensdk.ANExternalUserIdSource;
-import com.appnexus.opensdk.ANGDPRSettings;
+import android.webkit.WebView;
+import com.appnexus.opensdk.ANUserId;
 import com.appnexus.opensdk.BuildConfig;
 import com.appnexus.opensdk.MediaType;
 import com.appnexus.opensdk.R;
 import com.appnexus.opensdk.ut.UTConstants;
-
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Settings {
 
@@ -42,11 +41,9 @@ public class Settings {
      * ONE_PX - When 1px of content is displayed
      * LAZY_LOAD - When the content is loaded on the Webview (LazyLoad is enabled)
      * */
-    public enum CountImpression {
-        DEFAULT, // When the Ad is displayed
-        ON_LOAD, // When content is loaded on the WebView
-        ONE_PX,  // When 1px of content is displayed
-        LAZY_LOAD // When the content is loaded on the Webview (LazyLoad is enabled)
+    public enum ImpressionType {
+        BEGIN_TO_RENDER, // When the Ad begin to render
+        VIEWABLE_IMPRESSION,  // When 1px of Ad content is visible on screen
     }
 
     public String hidmd5 = null;
@@ -71,7 +68,8 @@ public class Settings {
     public boolean debug_mode = false; // This should always be false here.
     public String ua = null;
 
-    public final String sdkVersion = "7.19.1";
+    public final String sdkVersion = "8.6";
+//            BuildConfig.VERSION_NAME;
 
 
     public String mcc;
@@ -99,14 +97,7 @@ public class Settings {
     private HashSet<String> invalidNativeNetworks = new HashSet<String>();
 
     public String publisherUserId = "";
-    public Map<ANExternalUserIdSource,String> externalUserIds = new HashMap<>();
-
-    /**
-     * This boolean is responsible for firing the Impression tracker on 1px visibility of the Ad View
-     * true - follow the 1px constraint to fire the Impression
-     * false - do not follow the 1px constraint to fire the Impression
-     * */
-    public static boolean countImpressionOn1pxRendering = false;
+    public List<ANUserId> userIds = new ArrayList<>();
 
     /**
      * @deprecated
@@ -157,6 +148,13 @@ public class Settings {
 
     private static Settings settings_instance = null;
     public boolean locationEnabledForCreative = true;
+
+    /**
+     * This map is responsible for storing the installed packages for given Action,
+     */
+    private static Map<String, Boolean> hasIntentMap = new HashMap();
+
+    private static List<WebView> cachedAdWebView = new CopyOnWriteArrayList();
 
     public static Settings getSettings() {
         if (settings_instance == null) {
@@ -223,4 +221,36 @@ public class Settings {
         return UTConstants.COOKIE_DOMAIN;
     }
 
+
+    /**
+     * To cache this intent action .
+     * @param hasIntent
+     * @param action
+     */
+    public static void cacheIntentForAction(boolean hasIntent, String action) {
+        hasIntentMap.put(action,hasIntent);
+    }
+
+    /**
+     * To check the intent action is cached or not.
+     * @param action
+     */
+    public static Boolean getCachedIntentForAction(String action) {
+        return hasIntentMap.containsKey(action)? hasIntentMap.get(action):null;
+    }
+
+    /**
+     * To check the intent hashmap is empty or not.
+     */
+    public static Boolean isIntentMapAlreadyCached() {
+        return hasIntentMap.isEmpty();
+    }
+
+    public List<WebView> getCachedAdWebView() {
+        return cachedAdWebView;
+    }
+
+    public void setCachedAdWebView(List<WebView> cachedAdWebView) {
+        Settings.cachedAdWebView = cachedAdWebView;
+    }
 }

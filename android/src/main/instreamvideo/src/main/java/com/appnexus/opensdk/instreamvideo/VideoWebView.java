@@ -53,7 +53,6 @@ import com.appnexus.opensdk.utils.Settings;
 import com.appnexus.opensdk.utils.ViewUtil;
 import com.appnexus.opensdk.utils.WebviewUtil;
 import com.appnexus.opensdk.viewability.ANOmidAdSession;
-import com.appnexus.opensdk.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -114,9 +113,7 @@ class VideoWebView extends WebView {
             this.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
         this.getSettings().setAllowFileAccess(false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            this.getSettings().setAllowContentAccess(false);
-        }
+        this.getSettings().setAllowContentAccess(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             this.getSettings().setAllowFileAccessFromFileURLs(false);
             this.getSettings().setAllowUniversalAccessFromFileURLs(false);
@@ -318,7 +315,7 @@ class VideoWebView extends WebView {
     boolean loadURLInCorrectBrowser(String url) {
         if (owner.getClickThroughAction() == ANClickThroughAction.OPEN_SDK_BROWSER) {
 
-            Clog.d(Clog.baseLogTag, Clog.getString(R.string.opening_inapp));
+//            Clog.d(Clog.baseLogTag, Clog.getString(R.string.opening_inapp));
 
             //If it's a direct URL to the play store, just open it.
             if (checkForApp(url)) {
@@ -353,7 +350,7 @@ class VideoWebView extends WebView {
                                 out.stopLoading();
                             }
                         });
-                        progressDialog.setMessage(getContext().getResources().getString(R.string.loading));
+//                        progressDialog.setMessage(getContext().getResources().getString(R.string.loading));
                         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                         progressDialog.show();
                     }
@@ -370,8 +367,8 @@ class VideoWebView extends WebView {
                 return false;
             }
         } else if (owner.getClickThroughAction() == ANClickThroughAction.OPEN_DEVICE_BROWSER) {
-            Clog.d(Clog.baseLogTag,
-                    Clog.getString(R.string.opening_native));
+//            Clog.d(Clog.baseLogTag,
+//                    Clog.getString(R.string.opening_native));
             openNativeIntent(url);
         }
         return true;
@@ -391,8 +388,8 @@ class VideoWebView extends WebView {
             getContext().startActivity(intent);
             return true;
         } catch (ActivityNotFoundException e) {
-            Clog.w(Clog.baseLogTag,
-                    Clog.getString(R.string.opening_url_failed, url));
+//            Clog.w(Clog.baseLogTag,
+//                    Clog.getString(R.string.opening_url_failed, url));
             return false;
         }
     }
@@ -400,7 +397,7 @@ class VideoWebView extends WebView {
     // returns success or failure
     private boolean checkForApp(String url) {
         if (url.contains("://play.google.com") || (!url.startsWith("http") && !url.startsWith("about:blank"))) {
-            Clog.i(Clog.baseLogTag, Clog.getString(R.string.opening_app_store));
+//            Clog.i(Clog.baseLogTag, Clog.getString(R.string.opening_app_store));
             return openNativeIntent(url);
         }
 
@@ -419,7 +416,7 @@ class VideoWebView extends WebView {
         try {
             owner.getContext().startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            Clog.w(Clog.baseLogTag, Clog.getString(R.string.adactivity_missing, activity_clz.getName()));
+//            Clog.w(Clog.baseLogTag, Clog.getString(R.string.adactivity_missing, activity_clz.getName()));
             BrowserAdActivity.BROWSER_QUEUE.remove();
         }
     }
@@ -514,7 +511,7 @@ class VideoWebView extends WebView {
         try {
             //Encode videoXML to Base64String
             String encodedVastContent = Base64.encodeToString(baseAdResponse.getAdContent().getBytes("UTF-8"), Base64.NO_WRAP);
-            String options = Base64.encodeToString(ANVideoPlayerSettings.getVideoPlayerSettings().fetchBannerSettings().getBytes("UTF-8"), Base64.NO_WRAP);
+            String options = Base64.encodeToString(ANVideoPlayerSettings.getVideoPlayerSettings().fetchInStreamVideoSettings().getBytes("UTF-8"), Base64.NO_WRAP);
             String inject = String.format("javascript:window.createVastPlayerWithContent('%s','%s')",
                     encodedVastContent, options);
             this.injectJavaScript(inject);

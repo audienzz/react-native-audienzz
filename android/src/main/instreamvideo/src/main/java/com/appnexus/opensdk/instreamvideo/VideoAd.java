@@ -43,7 +43,6 @@ import com.appnexus.opensdk.ut.adresponse.BaseAdResponse;
 import com.appnexus.opensdk.ut.adresponse.RTBVASTAdResponse;
 import com.appnexus.opensdk.utils.Clog;
 import com.appnexus.opensdk.viewability.ANOmidViewabilty;
-import com.appnexus.opensdk.R;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -101,39 +100,6 @@ public class VideoAd implements Ad, MultiAd {
     }
 
     /**
-     * Retrieve the setting that determines whether or not the
-     * device's native browser is used instead of the in-app
-     * browser when the user clicks an ad.
-     *
-     * @return true if the device's native browser will be used; false otherwise.
-     * @deprecated Use getClickThroughAction instead
-     * Refer {@link ANClickThroughAction}
-     */
-    public boolean getOpensNativeBrowser() {
-        Clog.d(Clog.videoLogTag, Clog.getString(
-                R.string.set_placement_id, requestParameters.getOpensNativeBrowser()));
-        return requestParameters.getOpensNativeBrowser();
-    }
-
-    /**
-     * Set this to true to disable the in-app browser.  This will
-     * cause URLs to open in a native browser such as Chrome so
-     * that when the user clicks on an ad, your app will be paused
-     * and the native browser will open.  Set this to false to
-     * enable the in-app browser instead (a lightweight browser
-     * that runs within your app).  The default value is false.
-     *
-     * @param opensNativeBrowser
-     * @deprecated Use setClickThroughAction instead
-     * Refer {@link ANClickThroughAction}
-     */
-    public void setOpensNativeBrowser(boolean opensNativeBrowser) {
-        Clog.d(Clog.videoLogTag, Clog.getString(
-                R.string.set_opens_native_browser, opensNativeBrowser));
-        requestParameters.setOpensNativeBrowser(opensNativeBrowser);
-    }
-
-    /**
      * Sets the placement id of the VideoAd. The placement ID
      * identifies the location in your application where ads will
      * be shown.  You must have a valid, active placement ID to
@@ -142,8 +108,8 @@ public class VideoAd implements Ad, MultiAd {
      * @param placementID The placement ID to use.
      */
     public void setPlacementID(String placementID) {
-        Clog.d(Clog.videoLogTag, Clog.getString(
-                R.string.set_placement_id, placementID));
+//        Clog.d(Clog.videoLogTag, Clog.getString(
+//                R.string.set_placement_id, placementID));
         requestParameters.setPlacementID(placementID);
     }
 
@@ -153,8 +119,8 @@ public class VideoAd implements Ad, MultiAd {
      * @return The Placement ID
      */
     public String getPlacementID() {
-        Clog.d(Clog.videoLogTag, Clog.getString(
-                R.string.get_placement_id, requestParameters.getPlacementID()));
+//        Clog.d(Clog.videoLogTag, Clog.getString(
+//                R.string.get_placement_id, requestParameters.getPlacementID()));
         return requestParameters.getPlacementID();
     }
 
@@ -215,8 +181,8 @@ public class VideoAd implements Ad, MultiAd {
      * @param gender User's gender
      */
     public void setGender(AdView.GENDER gender) {
-        Clog.d(Clog.videoLogTag, Clog.getString(
-                R.string.set_gender, gender.toString()));
+//        Clog.d(Clog.videoLogTag, Clog.getString(
+//                R.string.set_gender, gender.toString()));
         requestParameters.setGender(gender);
     }
 
@@ -226,8 +192,8 @@ public class VideoAd implements Ad, MultiAd {
      * @return User's gender
      */
     public AdView.GENDER getGender() {
-        Clog.d(Clog.videoLogTag, Clog.getString(
-                R.string.get_gender, requestParameters.getGender().toString()));
+//        Clog.d(Clog.videoLogTag, Clog.getString(
+//                R.string.get_gender, requestParameters.getGender().toString()));
         return requestParameters.getGender();
     }
 
@@ -247,27 +213,6 @@ public class VideoAd implements Ad, MultiAd {
      */
     public String getAge() {
         return requestParameters.getAge();
-    }
-
-    @Deprecated
-    /**
-     * Set the current user's externalUID
-     *
-     * @param externalUid .
-     * @deprecated  Use ({@link SDKSettings}.setPublisherUserId)
-     */
-    public void setExternalUid(String externalUid) {
-        requestParameters.setExternalUid(externalUid);
-    }
-
-    @Deprecated
-    /**
-     * Retrieve the externalUID that was previously set.
-     *
-     * @return externalUID.
-     */
-    public String getExternalUid() {
-        return requestParameters.getExternalUid();
     }
 
     /**
@@ -420,10 +365,12 @@ public class VideoAd implements Ad, MultiAd {
     }
 
 
-    protected void loadAdFromVAST(String VASTXML, int width, int height) {
+    protected void loadAdFromVAST(String VASTXML, int width, int height, int buyerMemberId) {
         // load an ad directly from VASTXML
         VideoWebView output = new VideoWebView(this.getContext(), this, null);
-        RTBVASTAdResponse response = new RTBVASTAdResponse(width, height, AdType.VIDEO.toString(), null, null, getAdResponseInfo());
+        ANAdResponseInfo adResponseInfo = new ANAdResponseInfo();
+        adResponseInfo.setBuyMemberId(buyerMemberId);
+        RTBVASTAdResponse response = new RTBVASTAdResponse(width, height, AdType.VIDEO.toString(), null, null, adResponseInfo);
         response.setAdContent(VASTXML);
         response.setContentSource(UTConstants.RTB);
         response.addToExtras(UTConstants.EXTRAS_KEY_MRAID, true);
@@ -621,6 +568,11 @@ public class VideoAd implements Ad, MultiAd {
                 videoPlaybackListener.onAdClicked(VideoAd.this, clickUrl);
             }
         }
+
+        @Override
+        public void onAdImpression() {
+            Clog.d(Clog.videoLogTag, "onAdImpression");
+        }
     }
 
     public void activityOnDestroy() {
@@ -781,20 +733,6 @@ public class VideoAd implements Ad, MultiAd {
         return 0;
     }
 
-    @Deprecated
-    /**
-     * Retrieve the Creative Id  of the creative .
-     *
-     * @return the creativeId
-     * @deprecated use ({@link ANAdResponseInfo}.getCreativeId)
-     */
-    public String getCreativeId() {
-        if (getAdResponseInfo() != null) {
-            return getAdResponseInfo().getCreativeId();
-        }
-        return "";
-    }
-
     /**
      * Set AppNexus CreativeId that you want to display on this AdUnit for debugging/testing purpose.
      *
@@ -907,6 +845,16 @@ public class VideoAd implements Ad, MultiAd {
     @Override
     public MultiAd getMultiAd() {
         return this;
+    }
+
+    @Override
+    public Long getStartTime() {
+        return 0L;
+    }
+
+    @Override
+    public Long getFinishTime() {
+        return 0L;
     }
 
     public ANAdResponseInfo getAdResponseInfo() {

@@ -15,6 +15,8 @@
  */
 package com.appnexus.opensdk;
 
+import static com.appnexus.opensdk.utils.Settings.ImpressionType.BEGIN_TO_RENDER;
+
 import android.app.Activity;
 
 import com.appnexus.opensdk.tasksmanager.TasksManager;
@@ -29,7 +31,7 @@ import com.appnexus.opensdk.ut.adresponse.RTBNativeAdResponse;
 import com.appnexus.opensdk.ut.adresponse.RTBVASTAdResponse;
 import com.appnexus.opensdk.ut.adresponse.SSMHTMLAdResponse;
 import com.appnexus.opensdk.utils.Clog;
-import com.appnexus.opensdk.utils.Settings.CountImpression;
+import com.appnexus.opensdk.utils.Settings.ImpressionType;
 import com.appnexus.opensdk.utils.StringUtil;
 
 import java.lang.ref.WeakReference;
@@ -135,6 +137,7 @@ public class AdViewRequestManager extends RequestManager {
 
     @Override
     public void onReceiveAd(AdResponse ad) {
+        Clog.logTime(getClass().getSimpleName() + " - onReceiveAd");
         printMediatedClasses();
         if (controller != null) {
             // do not hold a reference of current mediated ad controller after ad is loaded
@@ -153,7 +156,7 @@ public class AdViewRequestManager extends RequestManager {
         }
         Ad owner = this.owner.get();
         if (owner != null) {
-            if (ad.getMediaType().equals(MediaType.BANNER)) {
+            if (ad.getMediaType() == MediaType.BANNER) {
                 BannerAdView bav = (BannerAdView) owner;
                 if (bav.getExpandsToFitScreenWidth() || bav.getResizeAdToFitContainer()) {
                     int width = ad.getResponseData().getWidth() <= 1 ? bav.getRequestParameters().getPrimarySize().width() : ad.getResponseData().getWidth();
@@ -165,7 +168,7 @@ public class AdViewRequestManager extends RequestManager {
                         bav.resizeViewToFitContainer(width, height, ad.getDisplayable().getView());
                     }
                 }
-                fireImpressionTrackerEarly (bav, ad.getResponseData());
+                fireImpressionTrackerIfBeginToRender(bav, ad.getResponseData());
             }
             ((AdDispatcher) owner.getAdDispatcher()).onAdLoaded(ad);
         } else {
@@ -180,10 +183,9 @@ public class AdViewRequestManager extends RequestManager {
         processUTResponse(response);
     }
 
-    private void fireImpressionTrackerEarly (AdView adView, BaseAdResponse response) {
-        if(adView.getEffectiveImpressionCountingMethod() == CountImpression.ON_LOAD ||
-                (adView.getEffectiveImpressionCountingMethod() == CountImpression.LAZY_LOAD &&
-                        adView.isWebviewActivated() && response.getAdType().equalsIgnoreCase(UTConstants.AD_TYPE_BANNER))){
+    private void fireImpressionTrackerIfBeginToRender(AdView adView, BaseAdResponse response) {
+        ImpressionType impressionType = response.getImpressionType();
+        if(impressionType == BEGIN_TO_RENDER && adView.getMediaType() != MediaType.INTERSTITIAL) {
             if(response.getImpressionURLs() != null && response.getImpressionURLs().size() > 0){
                 adView.impressionTrackers = response.getImpressionURLs();
                 adView.fireImpressionTracker();
@@ -195,6 +197,7 @@ public class AdViewRequestManager extends RequestManager {
     }
 
     private void processUTResponse(UTAdResponse response) {
+        Clog.logTime(getClass().getSimpleName() + " - processUTResponse");
         final Ad owner = this.owner.get();
         if ((owner != null) && doesAdListExists(response)) {
             setAdList(response.getAdList());
@@ -335,7 +338,7 @@ public class AdViewRequestManager extends RequestManager {
                         if (ownerAd instanceof AdView) {
                             initiateWebview(ownerAd, rtbAdResponse);
                             AdView owner = (AdView) ownerAd;
-                            fireImpressionTrackerEarly(owner, rtbAdResponse);
+                            fireImpressionTrackerIfBeginToRender(owner, rtbAdResponse);
                         } else {
                             Clog.e(Clog.baseLogTag, "AdType can not be identified.");
                             continueWaterfall(ResultCode.getNewInstance(ResultCode.INVALID_REQUEST));
@@ -378,6 +381,7 @@ public class AdViewRequestManager extends RequestManager {
 
 
     private void handleCSMResponse(Ad ownerAd, final CSMSDKAdResponse csmSdkAdResponse) {
+        Clog.logTime(getClass().getSimpleName() + " - handleCSMResponse");
         Clog.i(Clog.baseLogTag, "Mediation type is CSM, passing it to MediatedAdViewController.");
         if (csmSdkAdResponse.getAdType().equals(UTConstants.AD_TYPE_NATIVE)) {
             mediatedNativeAdController = MediatedNativeAdController.create(csmSdkAdResponse,
@@ -385,14 +389,14 @@ public class AdViewRequestManager extends RequestManager {
 
         } else {
             AdView owner = (AdView) ownerAd;
-            if (owner.getMediaType().equals(MediaType.BANNER)) {
+            if (owner.getMediaType() == MediaType.BANNER) {
                 controller = MediatedBannerAdViewController.create(
                         (Activity) owner.getContext(),
                         AdViewRequestManager.this,
                         csmSdkAdResponse,
                         owner.getAdDispatcher());
 
-            } else if (owner.getMediaType().equals(MediaType.INTERSTITIAL)) {
+            } else if (owner.getMediaType() == MediaType.INTERSTITIAL) {
                 controller = MediatedInterstitialAdViewController.create(
                         (Activity) owner.getContext(),
                         AdViewRequestManager.this,
@@ -420,12 +424,14 @@ public class AdViewRequestManager extends RequestManager {
             TasksManager.getInstance().executeOnMainThread(new Runnable() {
                 @Override
                 public void run() {
-                    adWebview = new AdWebView((AdView) owner, AdViewRequestManager.this);
+                    adWebview = SDKSettings.fetchWebView(((AdView) owner).getContext());
+                    adWebview.init((AdView) owner,  AdViewRequestManager.this);
                     adWebview.loadAd(response);
                 }
             });
         } else {
-            adWebview = new AdWebView((AdView) owner, AdViewRequestManager.this);
+            adWebview = SDKSettings.fetchWebView(((AdView) owner).getContext());
+            adWebview.init((AdView) owner,  AdViewRequestManager.this);
             adWebview.loadAd(response);
 
         }
@@ -448,7 +454,7 @@ public class AdViewRequestManager extends RequestManager {
             TasksManager.getInstance().executeOnMainThread(new Runnable() {
                 @Override
                 public void run() {
-                    fireImpressionTrackerEarly((AdView) adOwner, currentAd);
+                    fireImpressionTrackerIfBeginToRender((AdView) adOwner, currentAd);
                 }
             });
         }

@@ -16,7 +16,13 @@
 
 package com.appnexus.opensdk;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.LinearLayout;
 
 import com.appnexus.opensdk.mocks.MockDefaultExecutorSupplier;
 import com.appnexus.opensdk.shadows.ShadowAsyncTaskNoExecutor;
@@ -33,7 +39,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadow.api.Shadow;
+import org.robolectric.shadows.ShadowConnectivityManager;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.ShadowNetworkInfo;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -47,9 +56,16 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(RobolectricTestRunner.class)
 public class AdListenerTest extends BaseViewAdTest {
 
+    private ConnectivityManager connectivityManager;
+    private ShadowConnectivityManager shadowConnectivityManager;
+
     @Override
     public void setup() {
         super.setup();
+        connectivityManager = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        // Not using Shadows.shadowOf(connectivityManager) because of Robolectric bug when using API23+
+        // See: https://github.com/robolectric/robolectric/issues/1862
+        shadowConnectivityManager = (ShadowConnectivityManager) Shadow.extract(connectivityManager);
     }
 
     //This verifies that the AsyncTask for Request is being executed on the Correct Executor.
@@ -75,10 +91,118 @@ public class AdListenerTest extends BaseViewAdTest {
     }
 
     @Test
+    public void testBannerAdImpression() {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.banner()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        requestManager = new AdViewRequestManager(bannerAdView);
+        requestManager.execute();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+        assertCallbacks(true);
+        goOffline();
+        attachBannerToView();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+        assertTrue(adImpression);
+    }
+
+    @Test
+    public void testBannerAdImpressionForMultipleImpressionUrls() {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.bannerWithMultipleImpressionUrls()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        requestManager = new AdViewRequestManager(bannerAdView);
+        requestManager.execute();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+        assertCallbacks(true);
+        goOffline();
+        attachBannerToView();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        int count = 0;
+        while (count < 5 && !adImpression) {
+            count++;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        assertTrue(adImpression);
+    }
+
+    @Test
+    public void testBannerAdImpressionOnline() {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.banner()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        requestManager = new AdViewRequestManager(bannerAdView);
+        requestManager.execute();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+        assertCallbacks(true);
+        attachBannerToView();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+
+        int count = 0;
+        while (count < 5 && !adImpression) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                count++;
+            }
+        }
+
+        assertTrue(adImpression);
+    }
+
+    @Test
+    public void testBannerAdImpressionForMultipleImpressionUrlsOnline() {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.bannerWithMultipleImpressionUrls()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.blank()));
+        requestManager = new AdViewRequestManager(bannerAdView);
+        requestManager.execute();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+        assertCallbacks(true);
+        attachBannerToView();
+
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        assertTrue(adImpression);
+    }
+
+    @Test
     public void testLazyBannerAdLoaded() {
         server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.banner()));
         bannerAdView.enableLazyLoad();
         executeBannerRequest();
+
         assertLazyLoadCallbackInProgress();
         bannerAdView.loadLazyAd();
         Robolectric.flushBackgroundThreadScheduler();
@@ -369,7 +493,6 @@ public class AdListenerTest extends BaseViewAdTest {
     public void testBannerNativeAdLoaded() {
         bannerAdView.setAutoRefreshInterval(30000);
         bannerAdView.setLoadsInBackground(false);
-        bannerAdView.setOpensNativeBrowser(false);
         bannerAdView.setClickThroughAction(ANClickThroughAction.RETURN_URL);
         server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.anNativeWithoutImages()));
         Assert.assertEquals(AdType.UNKNOWN, bannerAdView.getAdType());
@@ -380,36 +503,9 @@ public class AdListenerTest extends BaseViewAdTest {
         Assert.assertEquals(30000, bannerAdView.getAutoRefreshInterval());
         Assert.assertEquals(AdType.NATIVE, bannerAdView.getAdType());
         assertCallbacks(true);
-        assertOpensInNativeBrowser();
         assertLoadsInBackground();
         assertClickThroughAction();
         assertClickThroughAction(ANClickThroughAction.RETURN_URL);
-    }
-
-    @Test
-    public void testClickThroughDependencyOnOpensNativeFalse() {
-        bannerAdView.setClickThroughAction(ANClickThroughAction.RETURN_URL);
-        bannerAdView.setOpensNativeBrowser(false);
-        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.anNativeWithoutImages()));
-        requestManager = new AdViewRequestManager(bannerAdView);
-        requestManager.execute();
-        Robolectric.flushBackgroundThreadScheduler();
-        Robolectric.flushForegroundThreadScheduler();
-        assertClickThroughAction();
-        assertClickThroughAction(ANClickThroughAction.OPEN_SDK_BROWSER);
-    }
-
-    @Test
-    public void testClickThroughDependencyOnOpensNativeTrue() {
-        bannerAdView.setClickThroughAction(ANClickThroughAction.RETURN_URL);
-        bannerAdView.setOpensNativeBrowser(true);
-        server.enqueue(new MockResponse().setResponseCode(200).setBody(TestResponsesUT.anNativeWithoutImages()));
-        requestManager = new AdViewRequestManager(bannerAdView);
-        requestManager.execute();
-        Robolectric.flushBackgroundThreadScheduler();
-        Robolectric.flushForegroundThreadScheduler();
-        assertClickThroughAction();
-        assertClickThroughAction(ANClickThroughAction.OPEN_DEVICE_BROWSER);
     }
 
     @Test
@@ -424,7 +520,7 @@ public class AdListenerTest extends BaseViewAdTest {
 
     private void executeBannerRequest() {
         bannerAdView.setAutoRefreshInterval(0);
-        bannerAdView.loadAdOffscreen();
+        bannerAdView.loadAd();
 
         waitForTasks();
         Robolectric.flushBackgroundThreadScheduler();
@@ -436,5 +532,28 @@ public class AdListenerTest extends BaseViewAdTest {
 
 //        Robolectric.getBackgroundThreadScheduler().advanceToNextPostedRunnable();
 //        Robolectric.getForegroundThreadScheduler().advanceToNextPostedRunnable();
+    }
+
+    private void attachBannerToView() {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(320, 50);
+        bannerAdView.setLayoutParams(layoutParams);
+
+        LinearLayout container = new LinearLayout(activity);
+        container.addView(bannerAdView);
+
+        final ViewGroup viewGroup = ((ViewGroup) activity.getWindow().getDecorView().getRootView());
+        viewGroup.addView(container);
+        bannerAdView.setVisibility(View.VISIBLE);
+    }
+
+    private void goOffline() {
+        NetworkInfo activeInfo = connectivityManager.getActiveNetworkInfo();
+        assertTrue(activeInfo != null && activeInfo.isConnected());
+
+        shadowConnectivityManager.setActiveNetworkInfo(
+                ShadowNetworkInfo.newInstance(NetworkInfo.DetailedState.DISCONNECTED, ConnectivityManager.TYPE_MOBILE, 0, true, false)
+        );
+        NetworkInfo activeInfo2 = connectivityManager.getActiveNetworkInfo();
+        assertTrue(activeInfo2 != null && !activeInfo2.isConnected());
     }
 }

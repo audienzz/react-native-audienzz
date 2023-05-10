@@ -279,10 +279,11 @@ public class BannerAdView extends AdView implements ScreenEventListener {
      */
     @Override
     public boolean loadAd() {
-        loadAdHasBeenCalled = true;
-        if (super.loadAd())
+
+        if (super.loadAd()) {
+            loadAdHasBeenCalled = true;
             return true;
-        else {
+        } else {
             loadAdHasBeenCalled = false;
             return false;
         }
@@ -573,11 +574,11 @@ public class BannerAdView extends AdView implements ScreenEventListener {
                 setShouldReloadOnResume(a.getBoolean(attr, false));
                 Clog.d(Clog.xmlLogTag, Clog.getString(
                         R.string.xml_set_should_reload, shouldReloadOnResume));
-            } else if (attr == R.styleable.BannerAdView_opens_native_browser) {
-                setOpensNativeBrowser(a.getBoolean(attr, false));
-                Clog.d(Clog.xmlLogTag, Clog.getString(
-                        R.string.xml_set_opens_native_browser,
-                        getOpensNativeBrowser()));
+//            } else if (attr == R.styleable.BannerAdView_opens_native_browser) {
+//                setOpensNativeBrowser(a.getBoolean(attr, false));
+//                Clog.d(Clog.xmlLogTag, Clog.getString(
+//                        R.string.xml_set_opens_native_browser,
+//                        getOpensNativeBrowser()));
             } else if (attr == R.styleable.BannerAdView_expands_to_fit_screen_width) {
                 setExpandsToFitScreenWidth(a.getBoolean(attr, false));
                 Clog.d(Clog.xmlLogTag, Clog.getString(
@@ -831,22 +832,6 @@ public class BannerAdView extends AdView implements ScreenEventListener {
     }
 
     /**
-     * @deprecated @deprecated Use setAllowNativeDemand(boolean) instead. Renderer to Placement mapping can now be done through Native Assembly in console.
-     *
-     * Sets whether or not Native Ads(AppNexus Media Type:12) can serve on this Ad object.
-     * This overrides the value set in console.
-     *
-     * @param enabled    whether to enable Native Ads or not. default is false
-     * @param rendererId the Native Assembly renderer_id that is associated with this placement.
-     */
-    public void setAllowNativeDemand(boolean enabled, int rendererId) {
-        Clog.d(Clog.publicFunctionsLogTag, Clog.getString(
-                R.string.set_allow_native, enabled));
-        requestParameters.setBannerNativeEnabled(enabled);
-        requestParameters.setRendererId(rendererId);
-    }
-
-    /**
      * Sets whether or not Native Ads(AppNexus Media Type:12) should be Renderered or not.
      *
      * @param enabled whether to enable Native Assembly Renderer or not. default is false
@@ -867,6 +852,18 @@ public class BannerAdView extends AdView implements ScreenEventListener {
         requestParameters.setBannerNativeEnabled(enabled);
     }
 
+    /**
+     * Sets whether or not High Impact media(AppNexus Media Type:11) can serve on this Ad object.
+     * This overrides the value set in console.
+     *
+     * @param enabled whether to enable High Impact media or not. default is false
+     */
+    public void setAllowHighImpactDemand(boolean enabled) {
+        Clog.d(Clog.publicFunctionsLogTag, Clog.getString(
+                R.string.set_allow_high_impact, enabled));
+        requestParameters.setHighImpactEnabled(enabled);
+    }
+
 
     /**
      * Check whether Video Ad is enabled on this ad view
@@ -885,6 +882,15 @@ public class BannerAdView extends AdView implements ScreenEventListener {
      */
     public boolean getAllowNativeDemand() {
         return requestParameters.isBannerNativeEnabled();
+    }
+
+    /**
+     * Check whether High Impact media is enabled on this ad view
+     *
+     * @return If true, High Impact Ad can be loaded on the ad view.
+     */
+    public boolean getAllowHighImpactDemand() {
+        return requestParameters.isHighImpactEnabled();
     }
 
 
@@ -983,6 +989,8 @@ public class BannerAdView extends AdView implements ScreenEventListener {
         if (this.currentDisplayable != null) {
             this.currentDisplayable.onPause();
         }
+
+        VisibilityDetector.getInstance().pauseVisibilityDetector();
     }
 
     @Override
@@ -990,6 +998,19 @@ public class BannerAdView extends AdView implements ScreenEventListener {
         if (this.currentDisplayable != null) {
             this.currentDisplayable.onResume();
         }
+
+        VisibilityDetector.getInstance().resumeVisibilityDetector();
+    }
+
+    /**
+     * To be called by the developer when the expanded video needs to exit.
+     * example: when activity's onBackPressed() function is called.
+     */
+    public boolean exitFullscreenVideo() {
+        if (this.currentDisplayable != null && getAdResponseInfo().getAdType() == AdType.VIDEO) {
+            return this.currentDisplayable.exitFullscreenVideo();
+        }
+        return false;
     }
 
     /**
@@ -1124,14 +1145,9 @@ public class BannerAdView extends AdView implements ScreenEventListener {
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
 
-        @SuppressWarnings("UnusedAssignment") int width = -1;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            Point p = new Point();
-            display.getSize(p);
-            width = p.x;
-        } else {
-            width = display.getWidth();
-        }
+        Point p = new Point();
+        display.getSize(p);
+        int width = p.x;
 
         float ratio_delta = ((float) width) / ((float) adWidth);
         int new_height = (int) Math.floor(adHeight * ratio_delta);
@@ -1240,9 +1256,16 @@ public class BannerAdView extends AdView implements ScreenEventListener {
         return animator.getTransitionDuration();
     }
 
+
     /**
-     * @deprecated RendererId is not used anymore
-     *
+     * Set the Native RendererId for this AdUnit/Placement
+     * @param rendererId the Native Assembly renderer_id that is associated with this placement.
+     */
+    public void setRendererId(int rendererId) {
+        requestParameters.setRendererId(rendererId);
+    }
+
+    /**
      * Get the RendererId of the request
      *
      * @return Default int value 0, which indicates that renderer_id is not sent in the UT Request.
@@ -1274,29 +1297,6 @@ public class BannerAdView extends AdView implements ScreenEventListener {
      */
     protected void setVideoOrientation(VideoOrientation videoOrientation) {
         this.videoOrientation = videoOrientation;
-    }
-
-
-    /**
-     * Set whether to count impression when the creative html loads.
-     * This feature is disabled by default.
-     *
-     * @param enabled If set to true, impression will be counted when creative html loads.
-     */
-    public void setCountImpressionOnAdLoad(boolean enabled) {
-        Clog.d(Clog.publicFunctionsLogTag, Clog.getString(
-                R.string.set_count_on_ad_load, enabled));
-        countBannerImpressionOnAdLoad = enabled;
-    }
-
-
-    /**
-     * Check whether impression is being counted on creative html load
-     *
-     * @return If true, impression will be counted when creative html loads.
-     */
-    public boolean getCountImpressionOnAdLoad() {
-        return countBannerImpressionOnAdLoad;
     }
 
     /**

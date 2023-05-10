@@ -127,7 +127,9 @@ public class ANNativeAdResponse extends BaseNativeAdResponse {
                 listener.onAdAboutToExpire();
             }
             if (anNativeExpireHandler != null) {
-                anNativeExpireHandler.postDelayed(expireRunnable, getExpiryInterval(UTConstants.RTB, memberId));
+                long interval = getExpiryInterval(UTConstants.RTB, memberId);
+                anNativeExpireHandler.postDelayed(expireRunnable, interval);
+                Clog.w(Clog.baseLogTag, "onAdExpired() will be called in " + interval + "ms.");
             }
         }
     };
@@ -325,16 +327,6 @@ public class ANNativeAdResponse extends BaseNativeAdResponse {
     }
 
     @Override
-    public String getCreativeId() {
-        return creativeId;
-    }
-
-    @Override
-    public void setCreativeId(String creativeId) {
-        this.creativeId = creativeId;
-    }
-
-    @Override
     protected boolean registerView(final View view, final NativeAdEventListener listener) {
         if (!expired && view != null) {
             this.listener = listener;
@@ -344,7 +336,7 @@ public class ANNativeAdResponse extends BaseNativeAdResponse {
                 return false;
             }
 
-            impressionTracker = ImpressionTracker.create(viewWeakReference, imp_trackers, visibilityDetector, view.getContext(), anOmidAdSession, new ImpressionTrackerListener() {
+            impressionTracker = ImpressionTracker.create(viewWeakReference, imp_trackers, visibilityDetector, view.getContext(), anOmidAdSession, getImpressionType(), new ImpressionTrackerListener() {
                 @Override
                 public void onImpressionTrackerFired() {
                     if (listener != null) {
@@ -404,22 +396,6 @@ public class ANNativeAdResponse extends BaseNativeAdResponse {
             anNativeExpireHandler.removeCallbacks(aboutToExpireRunnable);
             anNativeExpireHandler.post(expireRunnable);
         }
-    }
-
-    /**
-     * @deprecated Use getClickThroughAction instead
-     * Refer {@link ANClickThroughAction}
-     */
-    public boolean isOpenNativeBrowser() {
-        return (getClickThroughAction() == ANClickThroughAction.OPEN_DEVICE_BROWSER);
-    }
-
-    /**
-     * @deprecated Use setClickThroughAction instead
-     * Refer {@link ANClickThroughAction}
-     */
-    void openNativeBrowser(boolean openNativeBrowser) {
-        setClickThroughAction(openNativeBrowser ? ANClickThroughAction.OPEN_DEVICE_BROWSER : ANClickThroughAction.OPEN_SDK_BROWSER);
     }
 
     private boolean doesLoadingInBackground = true;

@@ -156,6 +156,12 @@ public class BannerAdToRequestParametersTest extends BaseRoboTest {
         bannerPostData = getRequestParametersPostData();
         assertTrue(bannerPostData.contains("\"allowed_media_types\":[1,12]"));
 
+        bannerAdView.setAllowHighImpactDemand(true);
+        bannerAdView.setAllowNativeDemand(false);
+        assertEquals(true,bannerAdView.getAllowHighImpactDemand());
+        bannerPostData = getRequestParametersPostData();
+        assertTrue(bannerPostData.contains("\"allowed_media_types\":[1,11]"));
+
 
 
     }
@@ -168,12 +174,10 @@ public class BannerAdToRequestParametersTest extends BaseRoboTest {
         String bannerPostData = getRequestParametersPostData();
         assertTrue(bannerPostData.contains("\"allowed_media_types\":[1]"));
 
-
-        bannerAdView.setAllowNativeDemand(true, 127);
+        bannerAdView.setAllowNativeDemand(true);
         assertEquals(true,bannerAdView.getAllowNativeDemand());
         String bannerNativePostData = getRequestParametersPostData();
         assertTrue(bannerNativePostData.contains("\"allowed_media_types\":[1,12]"));
-        assertTrue(bannerNativePostData.contains("\"native\":{\"renderer_id\":127}}]"));
     }
 
     // Test setAllowNative and setAllowVideo
@@ -185,16 +189,79 @@ public class BannerAdToRequestParametersTest extends BaseRoboTest {
         assertTrue(bannerPostData.contains("\"allowed_media_types\":[1]"));
 
 
-        bannerAdView.setAllowNativeDemand(true, 127);
+        bannerAdView.setAllowNativeDemand(true);
         bannerAdView.setAllowVideoDemand(true);
         assertEquals(true,bannerAdView.getAllowNativeDemand());
         assertEquals(true,bannerAdView.getAllowVideoDemand());
         String bannerNativePostData = getRequestParametersPostData();
         assertTrue(bannerNativePostData.contains("\"allowed_media_types\":[1,4,12]"));
-        assertTrue(bannerNativePostData.contains("\"native\":{\"renderer_id\":127}}]"));
     }
 
+    // Test setAllowHighImpact
+    @Test
+    public void testSetAllowHighImpact(){
+        assertEquals(false,bannerAdView.getAllowHighImpactDemand());
+        String bannerPostData = getRequestParametersPostData();
+        assertTrue(bannerPostData.contains("\"allowed_media_types\":[1]"));
 
+        bannerAdView.setAllowHighImpactDemand(true);
+        assertEquals(true,bannerAdView.getAllowHighImpactDemand());
+        String bannerNativePostData = getRequestParametersPostData();
+        assertTrue(bannerNativePostData.contains("\"allowed_media_types\":[1,11]"));
+    }
+
+    // Test setAllowNative and setAllowHighImpact
+    @Test
+    public void testSetAllowNativeAndHighImpact(){
+        assertEquals(false,bannerAdView.getAllowNativeDemand());
+        assertEquals(false,bannerAdView.getAllowHighImpactDemand());
+        String bannerPostData = getRequestParametersPostData();
+        assertTrue(bannerPostData.contains("\"allowed_media_types\":[1]"));
+
+
+        bannerAdView.setAllowNativeDemand(true);
+        bannerAdView.setAllowHighImpactDemand(true);
+        assertEquals(true,bannerAdView.getAllowNativeDemand());
+        assertEquals(true,bannerAdView.getAllowHighImpactDemand());
+        String bannerNativePostData = getRequestParametersPostData();
+        assertTrue(bannerNativePostData.contains("\"allowed_media_types\":[1,11,12]"));
+    }
+
+    // Test setAllowVideo and setAllowHighImpact
+    @Test
+    public void testSetAllowVideoAndHighImpact(){
+        assertEquals(false,bannerAdView.getAllowVideoDemand());
+        assertEquals(false,bannerAdView.getAllowHighImpactDemand());
+        String bannerPostData = getRequestParametersPostData();
+        assertTrue(bannerPostData.contains("\"allowed_media_types\":[1]"));
+
+
+        bannerAdView.setAllowVideoDemand(true);
+        bannerAdView.setAllowHighImpactDemand(true);
+        assertEquals(true,bannerAdView.getAllowVideoDemand());
+        assertEquals(true,bannerAdView.getAllowHighImpactDemand());
+        String bannerNativePostData = getRequestParametersPostData();
+        assertTrue(bannerNativePostData.contains("\"allowed_media_types\":[1,4,11]"));
+    }
+
+    // Test setAllowVideo and setAllowHighImpact
+    @Test
+    public void testSetAllowVideoNativeAndHighImpact(){
+        assertEquals(false,bannerAdView.getAllowNativeDemand());
+        assertEquals(false,bannerAdView.getAllowVideoDemand());
+        assertEquals(false,bannerAdView.getAllowHighImpactDemand());
+        String bannerPostData = getRequestParametersPostData();
+        assertTrue(bannerPostData.contains("\"allowed_media_types\":[1]"));
+
+        bannerAdView.setAllowNativeDemand(true);
+        bannerAdView.setAllowVideoDemand(true);
+        bannerAdView.setAllowHighImpactDemand(true);
+        assertEquals(true,bannerAdView.getAllowNativeDemand());
+        assertEquals(true,bannerAdView.getAllowVideoDemand());
+        assertEquals(true,bannerAdView.getAllowHighImpactDemand());
+        String bannerNativePostData = getRequestParametersPostData();
+        assertTrue(bannerNativePostData.contains("\"allowed_media_types\":[1,4,11,12]"));
+    }
 
 
     // Setting MAX size should reset all the other size params set earlier

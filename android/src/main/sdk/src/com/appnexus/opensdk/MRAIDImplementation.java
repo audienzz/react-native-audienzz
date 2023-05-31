@@ -32,9 +32,7 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaRouter;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.provider.CalendarContract;
 import android.util.Base64;
 import android.util.Pair;
 import android.view.Gravity;
@@ -133,7 +131,7 @@ class MRAIDImplementation {
                 }
             });
 
-            if (owner.adView.getMediaType().equals(MediaType.BANNER)) {
+            if (owner.adView.getMediaType() == MediaType.BANNER) {
                 default_gravity = ((FrameLayout.LayoutParams) owner.getLayoutParams()).gravity;
             }
 
@@ -184,44 +182,37 @@ class MRAIDImplementation {
 
     @SuppressLint("NewApi")
     private void setSupportsValues(AdWebView view) {
+        PackageManager pm = owner.getContext().getPackageManager();
+
         //SMS
-        if (hasIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("sms:5555555555")))) {
+        if (XandrAd.hasSMSIntent(pm)) {
             setSupports(view, "sms", true);
         }
 
         //Tel
-        if (hasIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("tel:5555555555")))) {
+        if (XandrAd.hasTelIntent(pm)) {
             setSupports(view, "tel", true);
         }
 
         //Calendar
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            if (hasIntent(new Intent(Intent.ACTION_EDIT).setData(CalendarContract.Events.CONTENT_URI))) {
-                setSupports(view, "calendar", true);
-                supportsCalendar = true;
-            } else if (hasIntent(new Intent(Intent.ACTION_EDIT).setType("vnd.android.cursor.item/event"))) {
-                setSupports(view, "calendar", true);
-                supportsCalendar = true;
-                W3CEvent.useMIME = true;
-            }
+        if (XandrAd.hasCalendarIntent(pm)) {
+            setSupports(view, "calendar", true);
+            supportsCalendar = true;
+        } else if (XandrAd.hasCalendarEventIntent(pm)) {
+            setSupports(view, "calendar", true);
+            supportsCalendar = true;
+            W3CEvent.useMIME = true;
         }
 
+
         //Store Picture only if on API 11 or above
-        PackageManager pm = owner.getContext().getPackageManager();
         if (pm.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, owner.getContext().getPackageName()) == PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                setSupports(view, "storePicture", true);
-                supportsPictureAPI = true;
-            }
+            setSupports(view, "storePicture", true);
+            supportsPictureAPI = true;
         }
 
         //Video should always work inline.
         setSupports(view, "inlineVideo", true);
-    }
-
-    boolean hasIntent(Intent i) {
-        PackageManager pm = owner.getContext().getPackageManager();
-        return pm.queryIntentActivities(i, 0).size() > 0;
     }
 
     void onViewableChange(boolean viewable) {
@@ -278,7 +269,7 @@ class MRAIDImplementation {
                     owner.getLayoutParams());
             lp.height = default_height;
             lp.width = default_width;
-            if (owner.adView.getMediaType().equals(MediaType.BANNER)) {
+            if (owner.adView.getMediaType() == MediaType.BANNER) {
                 lp.gravity = default_gravity;
             } else {
                 lp.gravity = Gravity.CENTER;

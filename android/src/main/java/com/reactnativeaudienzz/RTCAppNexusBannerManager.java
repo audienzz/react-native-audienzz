@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.appnexus.opensdk.ANClickThroughAction;
 import com.appnexus.opensdk.AdSize;
 import com.appnexus.opensdk.SDKSettings;
+import com.appnexus.opensdk.InitListener;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.common.MapBuilder;
@@ -23,9 +24,7 @@ class RTCAppNexusBannerManager extends ViewGroupManager<RTCAppNexusBannerView> {
 
     public static final String REACT_CLASS = "RCTAppNexusBanner";
 
-    public RTCAppNexusBannerManager() {
-        SDKSettings.useHttps(true);
-    }
+    public RTCAppNexusBannerManager() {}
 
     @NonNull
     @Override

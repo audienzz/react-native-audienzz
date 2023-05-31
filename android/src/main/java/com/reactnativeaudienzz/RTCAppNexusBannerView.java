@@ -10,8 +10,10 @@ import android.view.ViewTreeObserver;
 import com.appnexus.opensdk.ANClickThroughAction;
 import com.appnexus.opensdk.AdListener;
 import com.appnexus.opensdk.AdView;
+import com.appnexus.opensdk.InitListener;
 import com.appnexus.opensdk.NativeAdResponse;
 import com.appnexus.opensdk.ResultCode;
+import com.appnexus.opensdk.XandrAd;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -32,6 +34,14 @@ class RTCAppNexusBannerView extends ReactViewGroup {
   public RTCAppNexusBannerView(ThemedReactContext themedReactContext) {
     super(themedReactContext);
     setLayerType(LAYER_TYPE_HARDWARE, null);
+
+    XandrAd.init(Integer.parseInt("15624474"), themedReactContext.getCurrentActivity(), true, new InitListener() {
+      @Override
+      public void onInitFinished(boolean success) {}
+
+      @Override
+      public void onInitFinished() {}
+    });
 
     mEventEmitter = themedReactContext.getJSModule(RCTEventEmitter.class);
     banner = new RTCAppNexusBanner(themedReactContext.getCurrentActivity());
@@ -190,6 +200,9 @@ class RTCAppNexusBannerView extends ReactViewGroup {
       public void onLazyAdLoaded(AdView adView) {
         onAdLazyLoadSuccess(adView.getId(), banner.getAdWidth(), banner.getAdHeight(), adView.getAdResponseInfo().getCreativeId());
       }
+
+      @Override
+      public void onAdImpression(AdView adView) {}
     };
 
     banner.setAdListener(adListener);

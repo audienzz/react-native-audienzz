@@ -18,9 +18,9 @@ package com.appnexus.opensdk.utils;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Pair;
 
+import com.appnexus.opensdk.InitListener;
 import com.appnexus.opensdk.SDKSettings;
 import com.appnexus.opensdk.tasksmanager.TasksManager;
 
@@ -93,7 +93,7 @@ public class AdvertisingIDUtil {
         return new Pair<String, Boolean>(aaid, limited);
     }
 
-    public static void retrieveAndSetAAID(final Context context, final SDKSettings.InitListener listener) {
+    public static void retrieveAndSetAAID(final Context context, final InitListener listener) {
         // skip if AAID is already available
         if (!StringUtil.isEmpty(SDKSettings.getAAID())) {
             return;
@@ -101,11 +101,7 @@ public class AdvertisingIDUtil {
         if (!SDKSettings.isBackgroundThreadingEnabled()) {
             AAIDTask getAAIDTask = new AAIDTask(context, listener);
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    getAAIDTask.executeOnExecutor(SDKSettings.getExternalExecutor());
-                } else {
-                    getAAIDTask.execute();
-                }
+                getAAIDTask.executeOnExecutor(SDKSettings.getExternalExecutor());
             } catch (RejectedExecutionException rejectedExecutionException) {
                 Clog.e(Clog.baseLogTag, "Concurrent Thread Exception while fetching the AAID: "
                         + rejectedExecutionException.getMessage());
@@ -121,7 +117,7 @@ public class AdvertisingIDUtil {
                         @Override
                         public void run() {
                             if (listener != null) {
-                                listener.onInitFinished();
+                                listener.onInitFinished(true);
                             }
                         }
                     });
@@ -139,9 +135,9 @@ public class AdvertisingIDUtil {
 
 
         private WeakReference<Context> context;
-        SDKSettings.InitListener listener;
+        InitListener listener;
 
-        private AAIDTask(Context context, SDKSettings.InitListener listener) {
+        private AAIDTask(Context context, InitListener listener) {
             this.context = new WeakReference<Context>(context);
             this.listener = listener;
         }
@@ -157,7 +153,7 @@ public class AdvertisingIDUtil {
             super.onPostExecute(pair);
             SDKSettings.setAAID(pair.first, pair.second);
             if (listener != null) {
-                listener.onInitFinished();
+                listener.onInitFinished(true);
             }
         }
     }

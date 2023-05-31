@@ -56,6 +56,7 @@ import com.appnexus.opensdk.utils.Clog;
 import com.appnexus.opensdk.utils.HTTPGet;
 import com.appnexus.opensdk.utils.HTTPResponse;
 import com.appnexus.opensdk.utils.Settings;
+import com.appnexus.opensdk.utils.Settings.ImpressionType;
 import com.appnexus.opensdk.utils.StringUtil;
 import com.appnexus.opensdk.utils.ViewUtil;
 import com.appnexus.opensdk.utils.WebviewUtil;
@@ -115,17 +116,32 @@ class AdWebView extends WebView implements Displayable,
     private final String RENDERER_FILE = "apn_renderNativeAssets.html";
     String RENDERER_URL = "AN_NATIVE_ASSEMBLY_RENDERER_URL";
     String RENDERER_JSON = "AN_NATIVE_RESPONSE_OBJECT";
+    private boolean isDestroyTriggered;
+
+    public AdWebView(Context context) {
+        super(new MutableContextWrapper(context));
+        setupSettings();
+    }
 
     public AdWebView(AdView adView, UTAdRequester requester) {
         super(new MutableContextWrapper(adView.getContext()));
-        this.adView = adView;
-        this.caller_requester = requester;
-        this.initialMraidStateString = MRAIDImplementation.MRAID_INIT_STATE_STRINGS[
-                MRAIDImplementation.MRAID_INIT_STATE.STARTING_DEFAULT.ordinal()];
+        init(adView, requester);
         setupSettings();
         setup();
     }
 
+    public void init(AdView adView, UTAdRequester requester) {
+        Context context = getContext();
+        if (context instanceof MutableContextWrapper) {
+            ((MutableContextWrapper) context).setBaseContext(adView.getContext());
+        }
+        this.adView = adView;
+        this.adView.setCurrentDisplayable(this);
+        this.caller_requester = requester;
+        this.initialMraidStateString = MRAIDImplementation.MRAID_INIT_STATE_STRINGS[
+                MRAIDImplementation.MRAID_INIT_STATE.STARTING_DEFAULT.ordinal()];
+        setup();
+    }
 
     @SuppressWarnings("deprecation")
     @SuppressLint("SetJavaScriptEnabled")
@@ -190,12 +206,6 @@ class AdWebView extends WebView implements Displayable,
 
             isVideoAd = (UTConstants.AD_TYPE_VIDEO.equalsIgnoreCase(ad.getAdType()));
             isNativeAd = (UTConstants.AD_TYPE_NATIVE.equalsIgnoreCase(ad.getAdType()));
-
-            if(adView.getEffectiveImpressionCountingMethod() == Settings.CountImpression.ON_LOAD ||
-                    (adView.getEffectiveImpressionCountingMethod() == Settings.CountImpression.LAZY_LOAD &&
-                            adView.isWebviewActivated() && ad.getAdType().equalsIgnoreCase(UTConstants.AD_TYPE_BANNER))) {
-                onAdImpression();
-            }
 
             if (isNativeAd) {
                 isMRAIDEnabled = false;
@@ -374,6 +384,11 @@ class AdWebView extends WebView implements Displayable,
     private class AdWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+            if (isDestroyTriggered) {
+                return false;
+            }
+
             Clog.v(Clog.baseLogTag, "Loading URL: " + url);
 
             if (adView == null) {
@@ -686,7 +701,7 @@ class AdWebView extends WebView implements Displayable,
         return new AdResponse() {
             @Override
             public MediaType getMediaType() {
-                return adView.getMediaType();
+                return adView != null ? adView.getMediaType() : null;
             }
 
             @Override
@@ -740,19 +755,21 @@ class AdWebView extends WebView implements Displayable,
     @Override
     public void destroy() {
 
+        isDestroyTriggered = true;
+
         // in case `this` was not removed when destroy was called
         ViewUtil.removeChildFromParent(this);
 
         MutableContextWrapper wrapper = (MutableContextWrapper) getContext();
         wrapper.setBaseContext(wrapper.getApplicationContext());
 
+        setWebViewClient(new WebViewClient());
+
         if (mWebChromeClient != null) {
             mWebChromeClient.onHideCustomView();
             mWebChromeClient = null;
             setWebChromeClient(null);
         }
-
-        setWebViewClient(null);
 
         if (isNativeAd) {
             NativeAdSDK.unRegisterTracking(this);
@@ -776,6 +793,7 @@ class AdWebView extends WebView implements Displayable,
                 }
             }, 300);
         }
+//        AdWebView.super.destroy();
         this.removeAllViews();
         stopCheckViewable();
 
@@ -834,6 +852,14 @@ class AdWebView extends WebView implements Displayable,
         if (omidAdSession != null) {
             omidAdSession.removeAllFriendlyObstructions();
         }
+    }
+
+    @Override
+    public boolean exitFullscreenVideo() {
+        if (mWebChromeClient != null) {
+            return mWebChromeClient.exitFullscreenVideo();
+        }
+        return false;
     }
 
     public boolean isMRAIDUseCustomClose() {

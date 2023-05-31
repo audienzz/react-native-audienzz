@@ -29,7 +29,6 @@ import com.appnexus.opensdk.VideoOrientation;
 import com.appnexus.opensdk.utils.AdvertisingIDUtil;
 import com.appnexus.opensdk.utils.Clog;
 import com.appnexus.opensdk.utils.Settings;
-import com.appnexus.opensdk.R;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -61,15 +60,15 @@ class InstreamVideoView extends FrameLayout {
 
         SDKSettings.init(context, null);
 
-        Clog.d(Clog.publicFunctionsLogTag, Clog.getString(R.string.new_adview));
+//        Clog.d(Clog.publicFunctionsLogTag, Clog.getString(R.string.new_adview));
 
         // Store the AppID in the settings
         Settings.getSettings().app_id = context.getApplicationContext()
                 .getPackageName();
-        Clog.v(Clog.baseLogTag,
-                Clog.getString(R.string.appid, Settings.getSettings().app_id));
+//        Clog.v(Clog.baseLogTag,
+//                Clog.getString(R.string.appid, Settings.getSettings().app_id));
 
-        Clog.v(Clog.baseLogTag, Clog.getString(R.string.making_adman));
+//        Clog.v(Clog.baseLogTag, Clog.getString(R.string.making_adman));
 
         // Some AdMob creatives won't load unless we set their parent's viewgroup's padding to 0-0-0-0
         setPadding(0, 0, 0, 0);

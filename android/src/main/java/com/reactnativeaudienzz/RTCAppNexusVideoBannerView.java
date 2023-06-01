@@ -1,30 +1,23 @@
 package com.reactnativeaudienzz;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.VideoView;
 import com.appnexus.opensdk.ResultCode;
 import com.appnexus.opensdk.SDKSettings;
+import com.appnexus.opensdk.InitListener;
 import com.appnexus.opensdk.instreamvideo.Quartile;
-import com.appnexus.opensdk.instreamvideo.ResultCallback;
 import com.appnexus.opensdk.instreamvideo.VideoAd;
 import com.appnexus.opensdk.instreamvideo.VideoAdLoadListener;
 import com.appnexus.opensdk.instreamvideo.VideoAdPlaybackListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
@@ -155,7 +148,10 @@ class RTCAppNexusVideoBannerView extends ReactViewGroup {
   }
 
   protected void createVideoBanner() {
-    SDKSettings.init(context, new SDKSettings.InitListener() {
+    SDKSettings.init(context, new InitListener() {
+      @Override
+      public void onInitFinished(boolean success) {}
+
       @Override
       public void onInitFinished() {
         VideoAdLoadListener loadListener = new VideoAdLoadListener() {

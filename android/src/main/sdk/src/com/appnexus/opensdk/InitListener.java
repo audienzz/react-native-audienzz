@@ -1,5 +1,5 @@
 /*
- *    Copyright 2021 XANDR INC
+ *    Copyright 2022 APPNEXUS INC
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,12 +13,11 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+
 package com.appnexus.opensdk;
 
-public enum ANExternalUserIdSource {
-    CRITEO,
-    THE_TRADE_DESK,
-    NETID,
-    LIVERAMP,
-    UID2
+public interface InitListener {
+    void onInitFinished(boolean success);
+
+    void onInitFinished();
 }

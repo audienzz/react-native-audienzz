@@ -1,6 +1,7 @@
 #import "RCTAppNexusBannerView.h"
 #import <AppNexusSDK/ANSDKSettings.h>
 #import "RCTAppNexusUtils.h"
+#import <AppNexusSDK/XandrAd.h>
 
 #if __has_include(<React/RCTBridgeModule.h>)
 #import <React/RCTBridgeModule.h>
@@ -106,6 +107,14 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 }
 
 - (void)createAdBanner:(BOOL)enableLazyLoad {
+    [[XandrAd sharedInstance] initWithMemberID: [_placementId intValue] preCacheRequestObjects:YES completionHandler:^(BOOL success){
+                                  if(success){
+                                    NSLog(@"Completion is called with status success ");
+                                  }else{
+                                    NSLog(@"Completion is called with status failed ");
+                                  }
+                              }];
+
     if (_customUserAgent != nil) {
         ANSDKSettings *settings = [ANSDKSettings sharedInstance];
         settings.customUserAgent = _customUserAgent;
@@ -246,7 +255,6 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
         _onAdLoadSuccess(@{
                            @"width": [NSNumber numberWithUnsignedInt:actualSize.width],
                            @"height": [NSNumber numberWithUnsignedInt:actualSize.height],
-                           @"creativeId": [ad creativeId],
                            });
     }
 }
@@ -261,7 +269,6 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
         _onAdLazyLoadSuccess(@{
                            @"width": [NSNumber numberWithUnsignedInt:actualSize.width],
                            @"height": [NSNumber numberWithUnsignedInt:actualSize.height],
-                           @"creativeId": [ad creativeId],
                            });
     }
 }

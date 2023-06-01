@@ -46,7 +46,7 @@ import com.appnexus.opensdk.utils.Clog;
 import com.appnexus.opensdk.utils.HTTPGet;
 import com.appnexus.opensdk.utils.HTTPResponse;
 import com.appnexus.opensdk.utils.Settings;
-import com.appnexus.opensdk.utils.Settings.CountImpression;
+import com.appnexus.opensdk.utils.Settings.ImpressionType;
 import com.appnexus.opensdk.utils.ViewUtil;
 
 import java.lang.ref.WeakReference;
@@ -60,13 +60,14 @@ import java.util.List;
  */
 public abstract class AdView extends FrameLayout implements Ad, MultiAd, VisibilityListener {
 
+    protected Long startTime = 0L;
+    protected Long finishTime = 0L;
     AdFetcher mAdFetcher;
     private AdResponse ad = null;
     boolean mraid_changing_size_or_visibility = false;
     int creativeWidth;
     int creativeHeight;
     private AdType adType;
-    String creativeId = "";
     private AdListener adListener;
     private AppEventListener appEventListener;
 
@@ -75,7 +76,6 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
     private AdViewDispatcher dispatcher;
     boolean loadedOffscreen = false;
     boolean isMRAIDExpanded = false;
-    boolean countBannerImpressionOnAdLoad = false;
 
     private boolean shouldResizeParent = false;
     private boolean showLoadingIndicator = true;
@@ -84,6 +84,7 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
     private boolean enableLazyLoad = false;
     // This is to keep track if the loadLazyAd has been called or not
     private boolean activateWebview = false;
+    private  Displayable currentDisplayable = null;
 
     UTRequestParameters requestParameters;
 
@@ -99,6 +100,12 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
     private boolean isFetching = false;
 
     private ArrayList<WeakReference<View>> friendlyObstructionList = new ArrayList<>();
+    private int countOfImpressionTrackerUrls = 0;
+    private int countOfImpressionTrackersFired = 0;
+    private boolean isFired = false;
+    // Client suggested change for memory leak in VisibilityDetector
+    private boolean isDestroyed = false;
+
 
     /**
      * Begin Construction
@@ -117,6 +124,7 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
     }
 
     void setup(Context context, AttributeSet attrs) {
+        isDestroyed = false;
         dispatcher = new AdViewDispatcher(handler);
         requestParameters = new UTRequestParameters(context);
         adType = AdType.UNKNOWN;
@@ -155,6 +163,7 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
         isFetching = true;
         activateWebview = false;
         adResponseInfo = null;
+        startTime = System.currentTimeMillis();
     }
 
     /**
@@ -242,14 +251,6 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
     }
 
     /**
-     * @deprecated use {@link #loadAd()} instead.
-     */
-    @Deprecated
-    public void loadAdOffscreen() {
-        loadAd();
-    }
-
-    /**
      * Loads a new ad, if the ad space is visible, and sets the
      * AdView's placement ID.
      *
@@ -261,22 +262,28 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
         return loadAd();
     }
 
-    protected void loadAdFromHtml(String html, int width, int height) {
+    protected void loadAdFromHtml(String html, int width, int height, int buyerMemberId) {
         // load an ad directly from html
         loadedOffscreen = true;
-        AdWebView output = new AdWebView(this, null);
-        RTBHTMLAdResponse response = new RTBHTMLAdResponse(width, height, getMediaType().toString(), null, getAdResponseInfo());
+        AdWebView output = SDKSettings.fetchWebView(getContext());
+        output.init(this, null);
+        ANAdResponseInfo adResponseInfo = new ANAdResponseInfo();
+        adResponseInfo.setBuyMemberId(buyerMemberId);
+        RTBHTMLAdResponse response = new RTBHTMLAdResponse(width, height, getMediaType().toString(), null, adResponseInfo);
         response.setAdContent(html);
         output.loadAd(response);
         display(output);
     }
 
 
-    protected void loadAdFromVAST(String VASTXML, int width, int height) {
+    protected void loadAdFromVAST(String VASTXML, int width, int height, int buyerMemberId) {
         // load an ad directly from VASTXML
         loadedOffscreen = true;
-        AdWebView output = new AdWebView(this, null);
-        RTBVASTAdResponse response = new RTBVASTAdResponse(width, height, AdType.VIDEO.toString(), null, null, getAdResponseInfo());
+        AdWebView output = SDKSettings.fetchWebView(getContext());
+        output.init(this, null);
+        ANAdResponseInfo adResponseInfo = new ANAdResponseInfo();
+        adResponseInfo.setBuyMemberId(buyerMemberId);
+        RTBVASTAdResponse response = new RTBVASTAdResponse(width, height, AdType.VIDEO.toString(), null, null, adResponseInfo);
         response.setAdContent(VASTXML);
         response.setContentSource(UTConstants.RTB);
         response.addToExtras(UTConstants.EXTRAS_KEY_MRAID, true);
@@ -345,12 +352,10 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
         requestParameters.setInventoryCodeAndMemberID(memberID, inventoryCode);
     }
 
-    @Deprecated
     /**
      * Retrieve the member ID.
      *
      * @return the member id that this AdView belongs to.
-     * @deprecated use {{@link ANAdResponseInfo}.getBuyMemberId}
      */
     public int getMemberID() {
         return requestParameters.getMemberID();
@@ -388,11 +393,18 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
      * when permanently remove the AdView from the view hierarchy.
      */
     public void destroy() {
+        Clog.d(Clog.baseLogTag, "called destroy() on AdView");
+        isDestroyed = true;
+
         if (VisibilityDetector.getInstance() != null) {
             VisibilityDetector.getInstance().destroy(AdView.this);
         }
 
-        Clog.d(Clog.baseLogTag, "called destroy() on AdView");
+        if (this.currentDisplayable != null) {
+            this.currentDisplayable.destroy();
+            this.currentDisplayable = null;
+        }
+
         if (this.lastDisplayable != null) {
             this.lastDisplayable.destroy();
             this.lastDisplayable = null;
@@ -436,7 +448,7 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
             }
 
             // Reset the context of MutableContext wrapper for banner expand and close case.
-            if (getMediaType().equals(MediaType.BANNER) && (caller.owner.getContext() instanceof MutableContextWrapper)) {
+            if (getMediaType() == MediaType.BANNER && (caller.owner.getContext() instanceof MutableContextWrapper)) {
                 ((MutableContextWrapper) caller.owner.getContext()).setBaseContext(getContext());
             }
         }
@@ -592,7 +604,7 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
                 }
 
                 int adviewLoc[] = new int[2];
-                if (getMediaType().equals(MediaType.INTERSTITIAL)) {
+                if (getMediaType() == MediaType.INTERSTITIAL) {
                     InterstitialAdView.INTERSTITIALADVIEW_TO_USE.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
                     InterstitialAdView.INTERSTITIALADVIEW_TO_USE.getLocationOnScreen(adviewLoc);
                     container_size = new Point(InterstitialAdView.INTERSTITIALADVIEW_TO_USE.getMeasuredWidth(),
@@ -736,40 +748,6 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
     }
 
     /**
-     * Retrieve the setting that determines whether or not the
-     * device's native browser is used instead of the in-app
-     * browser when the user clicks an ad.
-     *
-     * @return true if the device's native browser will be used; false otherwise.
-     * @deprecated Use getClickThroughAction instead
-     * Refer {@link ANClickThroughAction}
-     */
-    public boolean getOpensNativeBrowser() {
-        Clog.d(Clog.publicFunctionsLogTag, Clog.getString(
-                R.string.get_opens_native_browser, requestParameters.getOpensNativeBrowser()));
-        return requestParameters.getOpensNativeBrowser();
-    }
-
-    /**
-     * Set this to true to disable the in-app browser.  This will
-     * cause URLs to open in a native browser such as Chrome so
-     * that when the user clicks on an ad, your app will be paused
-     * and the native browser will open.  Set this to false to
-     * enable the in-app browser instead (a lightweight browser
-     * that runs within your app).  The default value is false.
-     *
-     * @param opensNativeBrowser Whether or not the device's native browser should be used for
-     *                           landing pages.
-     * @deprecated Use setClickThroughAction instead
-     * Refer {@link ANClickThroughAction}
-     */
-    public void setOpensNativeBrowser(boolean opensNativeBrowser) {
-        Clog.d(Clog.publicFunctionsLogTag, Clog.getString(
-                R.string.set_opens_native_browser, opensNativeBrowser));
-        requestParameters.setOpensNativeBrowser(opensNativeBrowser);
-    }
-
-    /**
      * Returns the ANClickThroughAction that is used for this AdView.
      *
      * @return {@link ANClickThroughAction}
@@ -870,28 +848,6 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
         requestParameters.setAge(age);
     }
 
-    @Deprecated
-    /**
-     * Set the current user's externalUID
-     *
-     * @param externalUid .
-     * @deprecated  Use ({@link SDKSettings}.setPublisherUserId)
-     */
-    public void setExternalUid(String externalUid) {
-        requestParameters.setExternalUid(externalUid);
-    }
-
-    @Deprecated
-    /**
-     * Retrieve the externalUID that was previously set.
-     *
-     * @return externalUID.
-     */
-    public String getExternalUid() {
-        return requestParameters.getExternalUid();
-    }
-
-
     /**
      * Get whether or not the banner or interstitial should show the loading indicator
      * after being pressed, but before able to launch the browser.
@@ -914,6 +870,10 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
      */
     public void setShowLoadingIndicator(boolean show) {
         showLoadingIndicator = show;
+    }
+
+    public void setCurrentDisplayable(Displayable currentDisplayable) {
+        this.currentDisplayable = currentDisplayable;
     }
 
     /**
@@ -1006,22 +966,6 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
         return creativeWidth;
     }
 
-
-    @Deprecated
-    /**
-     * Retrieve the Creative Id  of the creative .
-     *
-     * @return the creativeId
-     * @deprecated see ({@link ANAdResponseInfo}.getCreativeId)
-     */
-    public String getCreativeId() {
-        return creativeId;
-    }
-
-    void setCreativeId(String creativeId) {
-        this.creativeId = creativeId;
-    }
-
     /**
      * Set AppNexus CreativeId that you want to display on this AdUnit for debugging/testing purpose.
      *
@@ -1051,15 +995,13 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
         adType = type;
     }
 
-    @Deprecated
     /**
      * Retrieve the AdType being served on the AdView
      * AdType can be Banner/Video
      *
      * @return AdType of the Creative
-     * @deprecated Use ({@link ANAdResponseInfo}.getAdType)
      */
-    public AdType getAdType() {
+    AdType getAdType() {
         return adType;
     }
 
@@ -1114,9 +1056,9 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
 
         private void processAdLoaded(AdResponse ad) {
             isFetching = false;
-            if (ad.getMediaType().equals(MediaType.BANNER) || ad.getMediaType().equals(MediaType.INTERSTITIAL)) {
+            if (ad.getMediaType() == MediaType.BANNER || ad.getMediaType() == MediaType.INTERSTITIAL) {
                 handleBannerOrInterstitialAd(ad);
-            } else if (ad.getMediaType().equals(MediaType.NATIVE)) {
+            } else if (ad.getMediaType() == MediaType.NATIVE) {
                 handleNativeAd(ad);
             } else {
                 Clog.e(Clog.baseLogTag, "UNKNOWN media type::" + ad.getMediaType());
@@ -1149,6 +1091,7 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
                 @Override
                 public void run() {
                     setAdResponseInfo(adResponseInfo);
+                    recordFinishTime();
                     if (adListener != null) {
                         adListener.onAdRequestFailed(AdView.this, code);
                     }
@@ -1205,7 +1148,7 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
 
         @Override
         public void toggleAutoRefresh() {
-            if (getMediaType().equals(MediaType.BANNER) && mAdFetcher.getState() == AdFetcher.STATE.STOPPED) {
+            if (getMediaType() == MediaType.BANNER && mAdFetcher.getState() == AdFetcher.STATE.STOPPED) {
                 mAdFetcher.start();
             }
         }
@@ -1224,14 +1167,27 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
             });
         }
 
+        @Override
+        public void onAdImpression() {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (adListener != null) {
+                        Clog.d(Clog.baseLogTag, "onAdImpression");
+                        adListener.onAdImpression(AdView.this);
+
+                    }
+                }
+            });
+        }
+
         private void handleNativeAd(AdResponse ad) {
             setAdType(AdType.NATIVE);
 
-            setCreativeId(ad.getResponseData().getAdResponseInfo().getCreativeId());
             final NativeAdResponse response = ad.getNativeAdResponse();
             response.setAdResponseInfo(ad.getResponseData().getAdResponseInfo());
 //            setAdResponseInfo(ad.getResponseData().getAdResponseInfo());
-            response.setCreativeId(ad.getResponseData().getAdResponseInfo().getCreativeId());
+            recordFinishTime();
             if (adListener != null) {
                 adListener.onAdLoaded(response);
             }
@@ -1241,11 +1197,22 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (ad.getResponseData() != null && ad.getResponseData().getImpressionURLs() != null && ad.getResponseData().getImpressionURLs().size() > 0) {
-                        impressionTrackers = ad.getResponseData().getImpressionURLs();
+                    // Client suggested change for memory leak in VisibilityDetector,
+                    // Stopping further execution if the AdView has already been destroyed.
+                    if (isDestroyed) {
+                        return;
                     }
-                    if (ad.getDisplayable() != null && ad.getMediaType().equals(MediaType.BANNER) && ad.getResponseData().getAdType().equalsIgnoreCase(UTConstants.AD_TYPE_BANNER)) {
-                        if (getEffectiveImpressionCountingMethod() == CountImpression.ONE_PX) {
+                    if (ad.getDisplayable() != null && ad.getResponseData().getAdType().equalsIgnoreCase(UTConstants.AD_TYPE_BANNER)) {
+                        BaseAdResponse baseAdResponse = ad.getResponseData();
+                        ImpressionType impressionType = baseAdResponse == null? null: baseAdResponse.getImpressionType();
+                        if (ad.getMediaType() == MediaType.INTERSTITIAL) {
+                            if (baseAdResponse.getImpressionURLs() != null && baseAdResponse.getImpressionURLs().size() > 0) {
+                                setImpressionTrackerVariables(baseAdResponse);
+                            }
+                        } else if (ImpressionType.VIEWABLE_IMPRESSION == impressionType && ad.getMediaType() == MediaType.BANNER) {
+                            if (baseAdResponse.getImpressionURLs() != null && baseAdResponse.getImpressionURLs().size() > 0) {
+                                setImpressionTrackerVariables(baseAdResponse);
+                            }
                             VisibilityDetector visibilityDetector = VisibilityDetector.getInstance();
                             if (visibilityDetector != null) {
                                 visibilityDetector.destroy(AdView.this);
@@ -1255,7 +1222,6 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
                     }
                     setCreativeWidth(ad.getDisplayable().getCreativeWidth());
                     setCreativeHeight(ad.getDisplayable().getCreativeHeight());
-                    setCreativeId(ad.getResponseData().getAdResponseInfo().getCreativeId());
                     setAdResponseInfo(ad.getResponseData().getAdResponseInfo());
                     if (ad.isMediated() && ad.getResponseData().getContentSource() == UTConstants.CSM) {
                         try {
@@ -1267,19 +1233,9 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
                         setFriendlyObstruction(ad.getDisplayable());
                         display(ad.getDisplayable());
                     }
-
-
-                    // Banner OnAdLoaded and if View is attached to window, or if the LazyLoad is enabled Impression is counted.
-                    if (getMediaType().equals(MediaType.BANNER)) {
-                        if (getEffectiveImpressionCountingMethod() == CountImpression.ON_LOAD  ||
-                                (getEffectiveImpressionCountingMethod() == CountImpression.LAZY_LOAD && isWebviewActivated() && ad.getResponseData().getAdType().equalsIgnoreCase(UTConstants.AD_TYPE_BANNER)) ||
-                                (getEffectiveImpressionCountingMethod() == CountImpression.DEFAULT && isAdViewAttachedToWindow())) {
-                            if (impressionTrackers != null && impressionTrackers.size() > 0) {
-                                fireImpressionTracker();
-                            }
-                        }
+                    if (ad.getMediaType() == MediaType.BANNER && ImpressionType.BEGIN_TO_RENDER == ad.getResponseData().getImpressionType()) {
+                        fireOmidImpression();
                     }
-
                     if (ad.getResponseData().getAdType().equalsIgnoreCase(UTConstants.AD_TYPE_VIDEO)) {
                         setAdType(AdType.VIDEO);
                         if (mAdFetcher.getState() == AdFetcher.STATE.AUTO_REFRESH) {
@@ -1288,12 +1244,45 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
                     } else if (ad.getResponseData().getAdType().equalsIgnoreCase(UTConstants.AD_TYPE_BANNER)) {
                         setAdType(AdType.BANNER);
                     }
+                    recordFinishTime();
                     if (adListener != null) {
                         adListener.onAdLoaded(AdView.this);
                     }
                     if (ad.getNativeAdResponse() != null) {
                         AdView.this.ad = ad;
-                        NativeAdSDK.registerTracking(ad.getNativeAdResponse(), ad.getDisplayable().getView(), null, getFriendlyObstructionViewsList());
+                        NativeAdSDK.registerTracking(ad.getNativeAdResponse(), ad.getDisplayable().getView(), new NativeAdEventListener() {
+                            @Override
+                            public void onAdWasClicked() {
+
+                            }
+
+                            @Override
+                            public void onAdWillLeaveApplication() {
+
+                            }
+
+                            @Override
+                            public void onAdWasClicked(String clickUrl, String fallbackURL) {
+
+                            }
+
+                            @Override
+                            public void onAdImpression() {
+                                if (dispatcher != null) {
+                                    dispatcher.onAdImpression();
+                                }
+                            }
+
+                            @Override
+                            public void onAdAboutToExpire() {
+
+                            }
+
+                            @Override
+                            public void onAdExpired() {
+
+                            }
+                        }, getFriendlyObstructionViewsList());
                     }
                 }
             });
@@ -1309,15 +1298,22 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
         }
     }
 
+    private void recordFinishTime() {
+        finishTime = System.currentTimeMillis();
+        Clog.logLoadTime(AdView.this);
+    }
+
+    void setImpressionTrackerVariables(BaseAdResponse ad) {
+        impressionTrackers = ad.getImpressionURLs();
+        countOfImpressionTrackersFired = 0;
+        countOfImpressionTrackerUrls = 0;
+        isFired = false;
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         isAttachedToWindow = true;
-        // OnAttaced to Window and Impresion tracker is non null then fire impression.
-        if (getEffectiveImpressionCountingMethod() == CountImpression.DEFAULT && getMediaType().equals(MediaType.BANNER) && impressionTrackers != null && impressionTrackers.size() > 0) {
-            fireImpressionTracker();
-        }
-
     }
 
     @Override
@@ -1331,6 +1327,7 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
             // Just to be fail safe since we are making it to null below to mark it as being used.
             if (impressionTrackers != null && impressionTrackers.size() > 0) {
                 ArrayList<String> impTrackers = new ArrayList<>(impressionTrackers);
+                countOfImpressionTrackerUrls = impTrackers.size();
                 // Making it to null so that there is no duplicate firing. We fire exactly only once.
                 impressionTrackers = null;
                 SharedNetworkManager nm = SharedNetworkManager.getInstance(getContext());
@@ -1343,23 +1340,33 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
                     for (String url : impTrackers) {
                         nm.addURL(url, getContext());
                     }
+                    Clog.i("Impression Tracker", "Added to the shared network manager");
+                    if (dispatcher != null) {
+                        dispatcher.onAdImpression();
+                    }
                 }
                 impTrackers.clear();
             }
-
-            if (lastDisplayable != null) {
-                lastDisplayable.onAdImpression();
-            }
+            fireOmidImpression();
         } catch (Exception e) { }
     }
 
+    private void fireOmidImpression() {
+        if (lastDisplayable != null) {
+            lastDisplayable.onAdImpression();
+        }
+    }
+
     void fireImpressionTracker(final String trackerUrl) {
-        Clog.d("FIRE_IMPRESSION", getEffectiveImpressionCountingMethod().name());
         HTTPGet impTracker = new HTTPGet() {
             @Override
             protected void onPostExecute(HTTPResponse response) {
                 if (response != null && response.getSucceeded()) {
-                    Clog.d(Clog.baseLogTag, "Impression Tracked successfully!");
+                    Clog.e(Clog.baseLogTag, "Impression Tracked successfully!");
+                    countOfImpressionTrackersFired++;
+                    if (countOfImpressionTrackersFired == countOfImpressionTrackerUrls && dispatcher != null) {
+                        dispatcher.onAdImpression();
+                    }
                 }
             }
 
@@ -1615,26 +1622,21 @@ public abstract class AdView extends FrameLayout implements Ad, MultiAd, Visibil
         return getAdResponseInfo() != null && getAdResponseInfo().getAdType() == AdType.BANNER;
     }
 
-    /**
-     * @return {@link CountImpression} Based on the boolean values set for the Impression Tracking
-     * */
-    public CountImpression getEffectiveImpressionCountingMethod() {
-        if (countBannerImpressionOnAdLoad) {
-            return CountImpression.ON_LOAD;
-        } else if (SDKSettings.getCountImpressionOn1pxRendering()) {
-            return CountImpression.ONE_PX;
-        } else if (isLazyLoadEnabled()) {
-            return CountImpression.LAZY_LOAD;
-        } else {
-            return CountImpression.DEFAULT;
-        }
-    }
-
     @Override
     public void onVisibilityChanged(boolean visible) {
         if (visible && impressionTrackers != null && impressionTrackers.size() > 0) {
             fireImpressionTracker();
             VisibilityDetector.getInstance().destroy(this);
         }
+    }
+
+    @Override
+    public Long getStartTime() {
+        return startTime;
+    }
+
+    @Override
+    public Long getFinishTime() {
+        return finishTime;
     }
 }

@@ -26,7 +26,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import com.appnexus.opensdk.utils.Clog;
-import com.appnexus.opensdk.R;
 
 
 class VideoChromeClient extends WebChromeClient {
@@ -42,19 +41,19 @@ class VideoChromeClient extends WebChromeClient {
 
     @Override
     public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-        Clog.v(Clog.jsLogTag,
-                Clog.getString(R.string.console_message,
-                        consoleMessage.message(),
-                        consoleMessage.lineNumber(),
-                        consoleMessage.sourceId()));
+//        Clog.v(Clog.jsLogTag,
+//                Clog.getString(R.string.console_message,
+//                        consoleMessage.message(),
+//                        consoleMessage.lineNumber(),
+//                        consoleMessage.sourceId()));
         return true;
     }
 
     @Override
     public boolean onJsAlert(WebView view, String url, String message,
                              JsResult result) {
-        Clog.v(Clog.jsLogTag,
-                Clog.getString(R.string.js_alert, message, url));
+//        Clog.v(Clog.jsLogTag,
+//                Clog.getString(R.string.js_alert, message, url));
         result.confirm();
         return true;
     }
@@ -69,7 +68,7 @@ class VideoChromeClient extends WebChromeClient {
     public void onShowCustomView(View view, CustomViewCallback callback) {
         super.onShowCustomView(view, callback);
         if (owner == null) {
-            Clog.w(Clog.baseLogTag, Clog.getString(R.string.fullscreen_video_show_error));
+//            Clog.w(Clog.baseLogTag, Clog.getString(R.string.fullscreen_video_show_error));
             return;
         }
         ViewGroup root = null;
@@ -78,7 +77,7 @@ class VideoChromeClient extends WebChromeClient {
         }
 
         if (root == null) {
-            Clog.w(Clog.baseLogTag, Clog.getString(R.string.fullscreen_video_show_error));
+//            Clog.w(Clog.baseLogTag, Clog.getString(R.string.fullscreen_video_show_error));
             return;
         }
 
@@ -101,7 +100,7 @@ class VideoChromeClient extends WebChromeClient {
     public void onHideCustomView() {
         super.onHideCustomView();
         if ((owner == null) || (frame == null)) {
-            Clog.w(Clog.baseLogTag, Clog.getString(R.string.fullscreen_video_hide_error));
+//            Clog.w(Clog.baseLogTag, Clog.getString(R.string.fullscreen_video_hide_error));
             return;
         }
         ViewGroup root = null;
@@ -109,7 +108,7 @@ class VideoChromeClient extends WebChromeClient {
             root = owner.getVideoAdView();
         }
         if (root == null) {
-            Clog.w(Clog.baseLogTag, Clog.getString(R.string.fullscreen_video_hide_error));
+//            Clog.w(Clog.baseLogTag, Clog.getString(R.string.fullscreen_video_hide_error));
             return;
         }
 

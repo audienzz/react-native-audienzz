@@ -2,8 +2,11 @@ package com.appnexus.opensdk;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-
+import android.content.Context;
 import androidx.annotation.NonNull;
+import android.text.TextUtils;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.appnexus.opensdk.shadows.ShadowSettings;
 import com.appnexus.opensdk.ut.UTAdRequest;
@@ -29,6 +32,7 @@ import org.robolectric.shadows.ShadowLog;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
@@ -37,6 +41,8 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
+
+import androidx.annotation.NonNull;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 21, shadows = {ShadowSettings.class, ShadowLog.class})
@@ -75,6 +81,7 @@ public class UTAdRequestTest extends BaseRoboTest implements UTAdRequester {
         Settings.getSettings().ua = "";
         SDKSettings.disableAAIDUsage(false);
         SDKSettings.setDoNotTrack(false);
+        SDKSettings.setPublisherUserId("");
     }
 
     @Test
@@ -558,7 +565,7 @@ public class UTAdRequestTest extends BaseRoboTest implements UTAdRequester {
     @Test
     public void testAdTypes() throws Exception {
         utRequestParameters.setPlacementID(String.valueOf(PLACEMENT_ID));
-        utRequestParameters.setExternalUid(EXTERNAL_UID);
+        SDKSettings.setPublisherUserId(EXTERNAL_UID);
         utRequestParameters.setMediaType(MediaType.BANNER);
         executionSteps();
         Robolectric.flushForegroundThreadScheduler();
@@ -625,6 +632,28 @@ public class UTAdRequestTest extends BaseRoboTest implements UTAdRequester {
         assertEquals(true, postDataWithGDPRValueSet.getJSONObject("gdpr_consent").getBoolean("consent_required"));
         assertEquals("fooBar", postDataWithGDPRValueSet.getJSONObject("gdpr_consent").getString("consent_string"));
         assertFalse(Settings.getSettings().deviceAccessAllowed); // When consent required set to true and no purpose consent string deviceAccess is not allowed
+    }
+
+    /**
+     * Test GPP in /ut request body
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGPPSettings() throws Exception {
+        executionSteps();
+        JSONObject postDataBeforeGPPValueSet = inspectPostData();
+        assertFalse(postDataBeforeGPPValueSet.has("privacy"));
+
+        setGPPString(activity, "gppString");
+        setGPPSID(activity, "1_2_3");
+        executionSteps();
+        JSONObject postDataWithGPPValueSet = inspectPostData();
+        assertEquals("gppString", postDataWithGPPValueSet.getJSONObject("privacy").getString("gpp"));
+        JSONArray testArr = postDataWithGPPValueSet.getJSONObject("privacy").getJSONArray("gpp_sid");
+        for (int i = 0; i < testArr.length(); i++) {
+            assertEquals(i+1, testArr.get(i));
+        }
     }
 
 
@@ -936,19 +965,8 @@ public class UTAdRequestTest extends BaseRoboTest implements UTAdRequester {
         assertFalse(userClear.has("external_uid"));
 
 
-        // Do both setExternalUid  and make sure  setExternalUid is present in the POST DATA
-        utRequestParameters.setExternalUid("test-setExternaluid-xyz");
-        executionSteps();
-        JSONObject postDataSetExternalUID = inspectPostData();
-        JSONObject userSetExternalUID = postDataSetExternalUID.getJSONObject("user");
-        assertTrue(userSetExternalUID.has("external_uid"));
-        assertTrue(userSetExternalUID.getString("external_uid").equals("test-setExternaluid-xyz"));
-
-
-
         // Set both setExternalUid and setPublisherUserId and make sure  setPublisherUserId overrides setExternalUid in the POST DATA
         SDKSettings.setPublisherUserId("test-publisheruserid-bar-xyz");
-        utRequestParameters.setExternalUid("test-setExternaluid-xyz");
         executionSteps();
         JSONObject postDataDoBoth = inspectPostData();
         JSONObject userDoBoth = postDataDoBoth.getJSONObject("user");
@@ -988,18 +1006,32 @@ public class UTAdRequestTest extends BaseRoboTest implements UTAdRequester {
     }
 
     /**
-     * Test External User Id parameters in /ut request body
+     * Test User Id parameters in /ut request body
      *
      * @throws Exception
      */
     @Test
-    public void testExternalUserIds() throws Exception {
-        Map<ANExternalUserIdSource,String> externalIdsMap = new HashMap<>();
-        externalIdsMap.put(ANExternalUserIdSource.LIVERAMP, "sdksettings-externalid-liveramp-foobar");
-        externalIdsMap.put(ANExternalUserIdSource.CRITEO, "sdksettings-externalid-Criteo-foobar");
-        externalIdsMap.put(ANExternalUserIdSource.THE_TRADE_DESK, "sdksettings-externalid-ttd-foobar");
-        externalIdsMap.put(ANExternalUserIdSource.NETID, "sdksettings-externalid-netid-foobar");
-        externalIdsMap.put(ANExternalUserIdSource.UID2, "sdksettings-externalid-uid2-foobar");
+    public void testUserIds() throws Exception {
+        List<ANUserId> userIds = new ArrayList<>();
+
+        ANUserId tradeDeskUserID = new ANUserId(ANUserId.Source.THE_TRADE_DESK, "sdksettings-userid-ttd-foobar");
+        userIds.add(tradeDeskUserID);
+
+        ANUserId criteoUserId = new ANUserId(ANUserId.Source.CRITEO, "sdksettings-userid-Criteo-foobar");
+        userIds.add(criteoUserId);
+
+        ANUserId netIdUserID = new ANUserId(ANUserId.Source.NETID, "sdksettings-userid-netid-foobar");
+        userIds.add(netIdUserID);
+
+        ANUserId liveRampUserID = new ANUserId(ANUserId.Source.LIVERAMP, "sdksettings-userid-liveramp-foobar");
+        userIds.add(liveRampUserID);
+
+        ANUserId UID2UserId = new ANUserId(ANUserId.Source.UID2, "sdksettings-userid-uid2-foobar");
+        userIds.add(UID2UserId);
+
+        ANUserId genericUserID = new ANUserId("Generic Source", "sdksettings-userid-generic-foobar");
+        userIds.add(genericUserID);
+
 
 
         // Default params, euid node will not be present in the POST DATA
@@ -1008,28 +1040,82 @@ public class UTAdRequestTest extends BaseRoboTest implements UTAdRequester {
         assertFalse(postDataBefore.has("eids"));
 
 
-        // setExternalIds Map and make sure  euid is present in the POST DATA
-        SDKSettings.setExternalUserIds(externalIdsMap);
+        SDKSettings.setUserIds(userIds);
         executionSteps();
         JSONObject postDataAftersetExternalIds = inspectPostData();
         JSONArray euidArrayAftersetExternalIds = postDataAftersetExternalIds.getJSONArray("eids");
         assertNotNull(euidArrayAftersetExternalIds);
-        assertEquals(externalIdsMap.size(), euidArrayAftersetExternalIds.length());
-        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"criteo.com\",\"id\":\"sdksettings-externalid-Criteo-foobar\"}"));
-        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"netid.de\",\"id\":\"sdksettings-externalid-netid-foobar\"}"));
-        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"liveramp.com\",\"id\":\"sdksettings-externalid-liveramp-foobar\"}"));
-        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"adserver.org\",\"id\":\"sdksettings-externalid-ttd-foobar\",\"rti_partner\":\"TDID\"}"));
-        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"uidapi.com\",\"id\":\"sdksettings-externalid-uid2-foobar\",\"rti_partner\":\"UID2\"}"));
-
+        assertEquals(userIds.size(), euidArrayAftersetExternalIds.length());
+        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"criteo.com\",\"id\":\"sdksettings-userid-Criteo-foobar\"}"));
+        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"netid.de\",\"id\":\"sdksettings-userid-netid-foobar\"}"));
+        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"liveramp.com\",\"id\":\"sdksettings-userid-liveramp-foobar\"}"));
+        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"adserver.org\",\"id\":\"sdksettings-userid-ttd-foobar\",\"rti_partner\":\"TDID\"}"));
+        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"uidapi.com\",\"id\":\"sdksettings-userid-uid2-foobar\",\"rti_partner\":\"UID2\"}"));
+        assertTrue(euidArrayAftersetExternalIds.toString().contains("{\"source\":\"Generic Source\",\"id\":\"sdksettings-userid-generic-foobar\"}"));
 
         // setExternalIds Map and later reset it and make sure  euid is not present in the POST DATA
-        SDKSettings.setExternalUserIds(externalIdsMap);
-        SDKSettings.setExternalUserIds(null);
+        SDKSettings.setUserIds(userIds);
+        SDKSettings.setUserIds(null);
         executionSteps();
         JSONObject postDataReset = inspectPostData();
         assertFalse(postDataReset.has("eids"));
 
     }
+
+    /**
+     * Test User Id comparison with parameters in /ut request body
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testUserIdsComparison() throws Exception {
+        ANUserId tradeDeskUserID = new ANUserId(ANUserId.Source.THE_TRADE_DESK, "sdksettings-userid-ttd-foobar");
+        ANUserId tradeDeskUserIDDup = new ANUserId(ANUserId.Source.THE_TRADE_DESK, "sdksettings-userid-ttd-foobar");
+        assertTrue(tradeDeskUserID.equals(tradeDeskUserIDDup));
+
+        ANUserId criteoUserId = new ANUserId(ANUserId.Source.CRITEO, "sdksettings-userid-Criteo-foobar");
+        ANUserId criteoUserIdDup = new ANUserId(ANUserId.Source.CRITEO, "sdksettings-userid-Criteo-foobar");
+        assertTrue(criteoUserId.equals(criteoUserIdDup));
+
+        ANUserId netIdUserID = new ANUserId(ANUserId.Source.NETID, "sdksettings-userid-netid-foobar");
+        ANUserId netIdUserIDDup = new ANUserId(ANUserId.Source.NETID, "sdksettings-userid-netid-foobar");
+        assertTrue(netIdUserID.equals(netIdUserIDDup));
+
+        ANUserId liveRampUserID = new ANUserId(ANUserId.Source.LIVERAMP, "sdksettings-userid-liveramp-foobar");
+        ANUserId liveRampUserIDDup = new ANUserId(ANUserId.Source.LIVERAMP, "sdksettings-userid-liveramp-foobar");
+        assertTrue(liveRampUserID.equals(liveRampUserIDDup));
+
+        ANUserId UID2UserId = new ANUserId(ANUserId.Source.UID2, "sdksettings-userid-uid2-foobar");
+        ANUserId UID2UserIdDup = new ANUserId(ANUserId.Source.UID2, "sdksettings-userid-uid2-foobar");
+        assertTrue(UID2UserId.equals(UID2UserIdDup));
+
+        ANUserId genericUserID = new ANUserId("Generic Source", "sdksettings-userid-generic-foobar");
+        ANUserId genericUserIDDup = new ANUserId("Generic Source", "sdksettings-userid-generic-foobar");
+        assertTrue(genericUserID.equals(genericUserIDDup));
+    }
+
+    /**
+     * Test User Id toString()
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testUserIdsToString() throws Exception {
+        ANUserId tradeDeskUserID = new ANUserId(ANUserId.Source.THE_TRADE_DESK, "sdksettings-userid-ttd-foobar");
+        ANUserId criteoUserId = new ANUserId(ANUserId.Source.CRITEO, "sdksettings-userid-Criteo-foobar");
+        ANUserId netIdUserID = new ANUserId(ANUserId.Source.NETID, "sdksettings-userid-netid-foobar");
+        ANUserId liveRampUserID = new ANUserId(ANUserId.Source.LIVERAMP, "sdksettings-userid-liveramp-foobar");
+        ANUserId UID2UserId = new ANUserId(ANUserId.Source.UID2, "sdksettings-userid-uid2-foobar");
+        ANUserId genericUserID = new ANUserId("Generic Source", "sdksettings-userid-generic-foobar");
+
+        assertEquals(criteoUserId.toString(), "{\"source\":\"criteo.com\",\"id\":\"sdksettings-userid-Criteo-foobar\"}");
+        assertEquals(netIdUserID.toString(), "{\"source\":\"netid.de\",\"id\":\"sdksettings-userid-netid-foobar\"}");
+        assertEquals(liveRampUserID.toString(), "{\"source\":\"liveramp.com\",\"id\":\"sdksettings-userid-liveramp-foobar\"}");
+        assertEquals(tradeDeskUserID.toString(), "{\"source\":\"adserver.org\",\"id\":\"sdksettings-userid-ttd-foobar\"}");
+        assertEquals(UID2UserId.toString(), "{\"source\":\"uidapi.com\",\"id\":\"sdksettings-userid-uid2-foobar\"}");
+        assertEquals(genericUserID.toString(), "{\"source\":\"Generic Source\",\"id\":\"sdksettings-userid-generic-foobar\"}");
+    }
+
 
 
     @Override
@@ -1339,5 +1425,28 @@ public class UTAdRequestTest extends BaseRoboTest implements UTAdRequester {
 
     @Override
     public void nativeRenderingFailed() {
+    }
+
+    /**
+     * Set the consent string in the SDK
+     *
+     * @param gppString
+     */
+    private void setGPPString(Context context, String gppString) {
+        if(!TextUtils.isEmpty(gppString) && context != null) {
+            PreferenceManager.getDefaultSharedPreferences(context).edit().putString("IABGPP_HDR_GppString", gppString).apply();
+        }
+    }
+
+
+    /**
+     * Set the consentRequired value in the SDK
+     *
+     * @param gppSid underscore (_) separated sid string
+     */
+    private void setGPPSID(Context context, String gppSid) {
+        if (context != null) {
+            PreferenceManager.getDefaultSharedPreferences(context).edit().putString("IABGPP_GppSID", gppSid).apply();
+        }
     }
 }

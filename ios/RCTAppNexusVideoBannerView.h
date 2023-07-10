@@ -6,7 +6,7 @@
 
 #import <AppNexusSDK/ANInstreamVideoAd.h>
 #import <AppNexusSDK/ANVideoPlayerSettings.h>
-#import <AppNexusSDK/ANVideoAdPlayer.h>
+#import "ANVideoAdPlayer.h
 
 @class RCTBridge;
 @class RCTAppNexusVideoBannerView;

@@ -1,5 +1,5 @@
 #import <sys/utsname.h>
-#import "ANVideoAdPlayer.h
+#import "ANVideoAdPlayer.h"
 
 @interface RCTAppNexusUtils : NSObject
 

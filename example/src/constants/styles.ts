@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import colors from './colors';
 
 const styles = StyleSheet.create({
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
 
     elevation: 1,
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: {width: 0, height: 0},
     shadowColor: colors.blackish,
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
 
     elevation: 5,
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: {width: 0, height: 0},
     shadowColor: colors.blackish,
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
 
     elevation: 5,
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: {width: 0, height: 0},
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 8,

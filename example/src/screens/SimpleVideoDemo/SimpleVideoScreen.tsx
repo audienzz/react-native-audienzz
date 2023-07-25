@@ -1,8 +1,8 @@
-import React, { FC, useEffect } from 'react';
-import { View, Text, Dimensions } from 'react-native';
-import { connect } from 'react-redux';
-import { AppNexusVideoBanner } from 'react-native-audienzz';
-import { styles } from '../../constants';
+import React, {FC, useEffect} from 'react';
+import {View, Text, Dimensions} from 'react-native';
+import {connect} from 'react-redux';
+import {AppNexusVideoBanner} from 'react-native-audienzz';
+import {styles} from '../../constants';
 
 type State = {
   settings: {
@@ -11,7 +11,7 @@ type State = {
   };
 };
 
-const SimpleVideoScreen: FC<Props> = ({ navigation, placementIdVideo }) => {
+const SimpleVideoScreen: FC<Props> = ({navigation, placementIdVideo}) => {
   useEffect(() => {
     navigation.setOptions({
       title: 'Video Ad Example',

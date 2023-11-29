@@ -240,6 +240,32 @@
 				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANInterstitialAdViewController.xib",
 				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/anjam.js",
 				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANMRAID.bundle/mraid.js",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANBrowserViewController.nib/designtime.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANBrowserViewController.nib/objects-11.0+.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANBrowserViewController.nib/runtime.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANBrowserViewController_SizeClasses.nib/designtime.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANBrowserViewController_SizeClasses.nib/objects-11.0+.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANBrowserViewController_SizeClasses.nib/runtime.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANInterstitialAdViewController.nib/designtime.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANInterstitialAdViewController.nib/objects-11.0+.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANInterstitialAdViewController.nib/runtime.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/an_arrow_left.png",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/an_arrow_left@2x.png",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/an_arrow_left@3x.png",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/an_arrow_right.png",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/an_arrow_right@2x.png",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/an_arrow_right@3x.png",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ASTMediationManager.js",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/errors.strings",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/MobileVastPlayer.js",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/omsdk.js",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/optionsparser.js",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/sdkjs.js",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/UIButtonBarArrowLeft.png",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/UIButtonBarArrowLeft@2x.png",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/UIButtonBarArrowRight.png",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/UIButtonBarArrowRight@2x.png",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/vastVideo.html",
 				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ASTMediationManager.js",
 				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/errors.strings",
 				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/images/an_arrow_left.png",
@@ -269,6 +295,9 @@
 				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/sdkjs.js",
 				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/vastVideo.html",
 				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANMRAID.bundle",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANBrowserViewController.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANBrowserViewController_SizeClasses.nib",
+				"${PODS_ROOT}/AppNexusSDK/sdk/sourcefiles/Resources/ANSDKResources.bundle/ANInterstitialAdViewController.nib",
 				"${PODS_ROOT}/AppNexusSDK/sdk/AppNexusSDK/SDK-Info.plist",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 			);
@@ -279,14 +308,26 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ANInterstitialAdViewController.nib",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/anjam.js",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/mraid.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ASTMediationManager.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/errors.strings",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/designtime.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/objects-11.0+.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/runtime.nib",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_left.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_left@2x.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_left@3x.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_right.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_right@2x.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/an_arrow_right@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ASTMediationManager.js",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/errors.strings",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MobileVastPlayer.js",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/omsdk.js",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/optionsparser.js",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/sdkjs.js",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowLeft.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowLeft@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowRight.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowRight@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/vastVideo.html",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/appnexus_logo_icon.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/appnexus_logo_icon@2x.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/compass.png",
@@ -297,16 +338,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/interstitial_flat_closebox.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/interstitial_flat_closebox@2x.png",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/interstitial_flat_closebox@3x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowLeft.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowLeft@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowRight.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/UIButtonBarArrowRight@2x.png",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MobileVastPlayer.js",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/nativeRenderer.html",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/omsdk.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/optionsparser.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/sdkjs.js",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/vastVideo.html",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ANMRAID.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDK-Info.plist",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
@@ -428,7 +460,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -489,7 +521,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

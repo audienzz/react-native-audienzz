@@ -65,6 +65,6 @@ dependencies {
     api fileTree(include: ['*.jar'], dir: 'src/main/sdk/libs')
     implementation 'com.facebook.react:react-native:+'
 
-    implementation 'org.robolectric:robolectric:4.4'
+   
     implementation 'com.squareup.okhttp:mockwebserver:2.7.5'
 }

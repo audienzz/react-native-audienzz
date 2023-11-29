@@ -59,8 +59,10 @@ public class UTAdRequest {
     private WeakReference<UTAdRequester> requester; // The instance of AdRequester which is filing this request.
     private UTRequestParameters requestParams;
     private AsyncRequest request = null;
+    private boolean isCancelled = false;
 
     public UTAdRequest(UTAdRequester adRequester) {
+        isCancelled = false;
         this.requester = new WeakReference<UTAdRequester>(adRequester);
         ANMultiAdRequest anMultiAdRequest = getMultiAdRequest();
         requestParams = anMultiAdRequest == null ? adRequester.getRequestParams() : anMultiAdRequest.getRequestParameters();
@@ -68,18 +70,18 @@ public class UTAdRequest {
             SharedNetworkManager networkManager = SharedNetworkManager.getInstance(requestParams.getContext());
             if (!networkManager.isConnected(requestParams.getContext())) {
                 fail(ResultCode.getNewInstance(ResultCode.NETWORK_ERROR));
-                Clog.i(Clog.httpReqLogTag, "Connection Error");
+                Clog.e(Clog.httpReqLogTag, "Connection Error");
                 if (request != null) {
                     request.cancel(true);
                 }
             }
         } else {
-            Clog.i(Clog.httpReqLogTag, "Internal Error");
-            fail(ResultCode.getNewInstance(ResultCode.INTERNAL_ERROR));
+            Clog.e(Clog.httpReqLogTag, "Internal Error");
             fail(ResultCode.getNewInstance(ResultCode.INTERNAL_ERROR));
             if (request != null) {
                 request.cancel(true);
             }
+            isCancelled = true;
         }
     }
 
@@ -89,11 +91,7 @@ public class UTAdRequest {
             processResponse(adResponseMap);
         } else {
             request = new AsyncRequest();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                request.executeOnExecutor(SDKSettings.getExternalExecutor());
-            } else {
-                request.execute();
-            }
+            request.executeOnExecutor(SDKSettings.getExternalExecutor());
         }
     }
 
@@ -104,6 +102,9 @@ public class UTAdRequest {
     }
 
     private void fail(ResultCode code) {
+        if (isCancelled) {
+            return;
+        }
         ANMultiAdRequest anMultiAdRequest = getMultiAdRequest();
         if (anMultiAdRequest != null && anMultiAdRequest.isMARRequestInProgress()) {
             anMultiAdRequest.onRequestFailed(code);
@@ -134,6 +135,7 @@ public class UTAdRequest {
     }
 
     HashMap<String, UTAdResponse> makeRequest() {
+        Clog.logTime(getClass().getSimpleName() + " - makeRequest");
         try {
 
             Settings.getSettings().deviceAccessAllowed = ANGDPRSettings.canIAccessDeviceData(requestParams.getContext()); // Make sure GDPR device access is allowed.
@@ -190,7 +192,7 @@ public class UTAdRequest {
 
                 String result = builder.toString();
 
-                Clog.i(Clog.httpRespLogTag, "RESPONSE - " + result);
+                Clog.d(Clog.httpRespLogTag, "RESPONSE - " + result);
                 Map<String, List<String>> headers = conn.getHeaderFields();
                 if (Settings.getSettings().deviceAccessAllowed && !Settings.getSettings().doNotTrack) {
                     WebviewUtil.cookieSync(headers);
@@ -248,12 +250,16 @@ public class UTAdRequest {
 
         @Override
         protected HashMap<String, UTAdResponse> doInBackground(Void... voids) {
-            return makeRequest();
+            // Client suggested changes to stop processing the AdRequest
+            return isCancelled()? null: makeRequest();
         }
 
         @Override
         protected void onPostExecute(HashMap<String, UTAdResponse> adResponseHashMap) {
-            processResponse(adResponseHashMap);
+            // Client suggested changes to stop processing the AdRequest
+            if (!isCancelled()) {
+                processResponse(adResponseHashMap);
+            }
         }
 
 
@@ -267,12 +273,13 @@ public class UTAdRequest {
 
 
     void processResponse(HashMap<String, UTAdResponse> adResponseMap) {
+        Clog.logTime(getClass().getSimpleName() + " - processResponse");
         // check for invalid responses
         ANMultiAdRequest anMultiAdRequest = getMultiAdRequest();
         if (anMultiAdRequest == null) {
 
             if (adResponseMap == null) {
-                Clog.i(Clog.httpRespLogTag, Clog.getString(R.string.no_response));
+                Clog.e(Clog.httpRespLogTag, Clog.getString(R.string.no_response));
                 fail(ResultCode.getNewInstance(ResultCode.INVALID_REQUEST));
                 return;
             }
@@ -280,7 +287,7 @@ public class UTAdRequest {
             if (adResponseMap.size() == 1) {
                 UTAdResponse result = adResponseMap.get(requestParams.getUUID());
                 if (result == null) {
-                    Clog.i(Clog.httpRespLogTag, Clog.getString(R.string.no_response));
+                    Clog.e(Clog.httpRespLogTag, Clog.getString(R.string.no_response));
                     fail(ResultCode.getNewInstance(ResultCode.NETWORK_ERROR));
                     return; // http request failed
                 }

@@ -18,6 +18,7 @@ package com.appnexus.opensdk;
 
 import android.view.View;
 
+import com.appnexus.opensdk.utils.Clog;
 import com.appnexus.opensdk.utils.ViewUtil;
 
 class MediatedDisplayable implements Displayable {
@@ -72,7 +73,7 @@ class MediatedDisplayable implements Displayable {
 
     @Override
     public void onAdImpression() {
-
+        Clog.d(Clog.mediationLogTag, "onAdImpression");
     }
 
     @Override
@@ -88,6 +89,11 @@ class MediatedDisplayable implements Displayable {
     @Override
     public void removeAllFriendlyObstructions() {
         // For clearing all the Friendly Obstruction
+    }
+
+    @Override
+    public boolean exitFullscreenVideo() {
+        return false;
     }
 
     void setView(View view) {

@@ -26,15 +26,15 @@ import android.webkit.WebView;
 import com.appnexus.opensdk.tasksmanager.TasksManager;
 import com.appnexus.opensdk.utils.AdvertisingIDUtil;
 import com.appnexus.opensdk.utils.Clog;
+import com.appnexus.opensdk.utils.HTTPGet;
+import com.appnexus.opensdk.utils.HTTPResponse;
 import com.appnexus.opensdk.utils.Settings;
 import com.appnexus.opensdk.utils.StringUtil;
 import com.appnexus.opensdk.viewability.ANOmidViewabilty;
 import com.iab.omid.library.appnexus.Omid;
 
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.Executor;
-
-import static com.appnexus.opensdk.utils.Settings.countImpressionOn1pxRendering;
 
 /**
  * Global static functions that apply to all SDK views and calls.
@@ -49,10 +49,14 @@ public class SDKSettings {
      * */
     private static Boolean useBackgroundThreads = false;
 
+    private static Boolean enableBannerOptimization = true;
+
     /**
      * For internal use only
      * */
     private static boolean isOmidActivationDone = false, isUserAgentFetched = false, isAAIDFetched = false;
+
+    private static boolean isWarmupAdCallDone = false;
 
     // hide the constructor from javadocs
     private SDKSettings() {
@@ -315,25 +319,6 @@ public class SDKSettings {
     }
 
     /**
-     * @param useHttps whether to enable Https or not.
-     * @deprecated The SDK uses Https by default.
-     * This API does not bring any change.
-     */
-    @Deprecated
-    public static void useHttps(boolean useHttps) {
-        return;
-    }
-
-    /**
-     * @deprecated The SDK uses Https by default.
-     * This API always returns true.
-     */
-    @Deprecated
-    public static boolean isHttpsEnabled() {
-        return true;
-    }
-
-    /**
      * Sets whether or not location (latitude, longitude)
      * permission alert will be shown to the user when called by the Creative.
      *
@@ -370,18 +355,18 @@ public class SDKSettings {
 
     /**
      * A Map containing objects that hold External UserId parameters for the current application user.
-     * @param externalUserIds
+     * @param userIdList
      */
-    public static void setExternalUserIds(Map<ANExternalUserIdSource,String> externalUserIds){
-         Settings.getSettings().externalUserIds = externalUserIds;
+    public static void setUserIds(List<ANUserId> userIdList){
+        Settings.getSettings().userIds = userIdList;
     }
 
     /**
-     * Returns the Map that hold External UserId parameters for the current application user, initially added using {@link #setExternalUserIds(Map<ANExternalUserIdSource,String>)}
+     * Returns the Map that hold External UserId parameters for the current application user, initially added using {@link #setUserIds(List)}
      * @@return externalUserIds as Map.
      */
-    public static Map<ANExternalUserIdSource,String> getExternalUserIds() {
-        return Settings.getSettings().externalUserIds;
+    public static List<ANUserId> getUserIds() {
+        return Settings.getSettings().userIds;
     }
 
 
@@ -399,7 +384,7 @@ public class SDKSettings {
     }
 
     public static Executor getExternalExecutor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && clientExecutor == null) {
+        if (clientExecutor == null) {
             return AsyncTask.THREAD_POOL_EXECUTOR;
         }
         return clientExecutor;
@@ -453,6 +438,8 @@ public class SDKSettings {
      * @param fetchAAID enable / disable fetching of AAID.
      * */
     public static void init(final Context context, final InitListener listener, final boolean fetchUserAgent, final boolean fetchAAID) {
+        prefetchWebview(context);
+        warmupAdCall();
         // Store the UA in the settings
         isOmidActivationDone = Omid.isActive();
         isUserAgentFetched = !fetchUserAgent || !StringUtil.isEmpty(Settings.getSettings().ua);
@@ -467,8 +454,16 @@ public class SDKSettings {
                 @Override
                 public void run() {
                     try {
-                        Settings.getSettings().ua = new WebView(context).getSettings()
-                                .getUserAgentString();
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            // Client suggested change where getDefaultUserAgent() is used to fetch user agent for Android version 17 and above
+                            Settings.getSettings().ua = WebSettings.getDefaultUserAgent(context);
+                        } else {
+                            WebView userAgentWebView = new WebView(context);
+                            Settings.getSettings().ua = userAgentWebView.getSettings()
+                                    .getUserAgentString();
+                            // Client suggested change to destroy webview after fetching user agent (prevent memory leaks) - since it holds context
+                            userAgentWebView.destroy();
+                        }
                         Clog.v(Clog.baseLogTag,
                                 Clog.getString(R.string.ua, Settings.getSettings().ua));
                         isUserAgentFetched = true;
@@ -489,9 +484,14 @@ public class SDKSettings {
         if (!isAAIDFetched) {
             AdvertisingIDUtil.retrieveAndSetAAID(context, new InitListener() {
                 @Override
-                public void onInitFinished() {
+                public void onInitFinished(boolean success) {
                     isAAIDFetched = true;
                     SDKSettings.onInitFinished(listener);
+                }
+
+                @Override
+                public void onInitFinished() {
+
                 }
             });
         }
@@ -500,45 +500,72 @@ public class SDKSettings {
         onInitFinished(listener);
     }
 
+    private static void warmupAdCall() {
+        if (isWarmupAdCallDone) {
+            return;
+        }
+        new HTTPGet()  {
+
+            @Override
+            protected void onPostExecute(HTTPResponse response) {
+                isWarmupAdCallDone = true;
+            }
+
+            @Override
+            protected String getUrl() {
+                return Settings.getAdRequestUrl();
+            }
+        }.execute();
+    }
+
+    private static void prefetchWebview(Context context) {
+        if (isBannerOptimizationEnabled()) {
+            List cachedAdWebView = Settings.getSettings().getCachedAdWebView();
+            if (cachedAdWebView.size() == 0) {
+                AdWebView webView = new AdWebView(context);
+                cachedAdWebView.add(webView);
+            }
+        }
+    }
+
+    public static AdWebView fetchWebView(Context context) {
+        AdWebView adWebView;
+        List cachedAdWebView = Settings.getSettings().getCachedAdWebView();
+        if (cachedAdWebView.size() > 0) {
+            adWebView = (AdWebView) cachedAdWebView.remove(0);
+        } else {
+            adWebView = new AdWebView(context);
+        }
+        prefetchWebview(context);
+        return adWebView;
+    }
+
     private static void onInitFinished(final InitListener listener) {
         if (listener != null && isOmidActivationDone && isUserAgentFetched && isAAIDFetched) {
             TasksManager.getInstance().executeOnMainThread(new Runnable() {
                 @Override
                 public void run() {
-                    listener.onInitFinished();
+                    listener.onInitFinished(true);
                 }
             });
         }
     }
 
-    public interface InitListener {
-        void onInitFinished();
+    /**
+     * Experimental API, to be used in case of issue with banner optimization
+     * To be removed in v9.0
+     * */
+    @Deprecated
+    public static void enableBannerOptimization(boolean enable) {
+        enableBannerOptimization = enable;
     }
 
     /**
-     * @return boolean that states the value of countImpressionOn1pxRendering
-     * set by using {@link #setCountImpressionOn1pxRendering(boolean)}. Default is false.
+     * Experimental API, to be used in case of issue with banner optimization
+     * To be removed in v9.0
      * */
-    public static boolean getCountImpressionOn1pxRendering() {
-        return countImpressionOn1pxRendering;
+    @Deprecated
+    public static Boolean isBannerOptimizationEnabled() {
+        return enableBannerOptimization;
     }
-
-    /**
-     * To enable the Impression counting on 1px display
-     * @param enable set true to enable, false to disable. Default is false.
-     * */
-    public static void setCountImpressionOn1pxRendering(boolean enable) {
-        countImpressionOn1pxRendering = enable;
-    }
-
-
-    /**
-     * @deprecated This will be removed in future releases. This is introduced just a fail safe kill switch for initial rollout. No Alternative.
-     * To allow/disallow using ib.adnxs-simple.com domain for Ad Requests.
-     * @param allow set true to enable, false to disable. Default is true.
-     * */
-    public static void setAllowUsingSimpleDomain(boolean allow) {
-        Settings.getSettings().simpleDomainUsageAllowed = allow;
-    }
-
 }

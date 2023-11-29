@@ -16,7 +16,6 @@ class RTCAppNexusVideoBannerManager extends ViewGroupManager<RTCAppNexusVideoBan
   public static final String REACT_CLASS = "RCTAppNexusVideoBanner";
 
   public RTCAppNexusVideoBannerManager() {
-    SDKSettings.useHttps(true);
   }
 
   @NonNull

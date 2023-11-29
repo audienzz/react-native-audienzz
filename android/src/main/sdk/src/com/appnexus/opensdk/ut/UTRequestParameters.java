@@ -30,8 +30,8 @@ import android.util.Pair;
 import com.appnexus.opensdk.ANClickThroughAction;
 import com.appnexus.opensdk.ANGDPRSettings;
 import com.appnexus.opensdk.ANMultiAdRequest;
-import com.appnexus.opensdk.ANExternalUserIdSource;
 import com.appnexus.opensdk.ANUSPrivacySettings;
+import com.appnexus.opensdk.ANUserId;
 import com.appnexus.opensdk.Ad;
 import com.appnexus.opensdk.AdSize;
 import com.appnexus.opensdk.AdView;
@@ -53,7 +53,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
 import com.appnexus.opensdk.viewability.ANOmidViewabilty;
 
@@ -61,8 +60,6 @@ public class UTRequestParameters {
 
     private MediaType mediaType;
     private String placementID;
-    @Deprecated
-    private String externalUid;
     private int memberID;
     private int publisherId;
     private String invCode;
@@ -74,6 +71,7 @@ public class UTRequestParameters {
     private boolean isBannerVideoEnabled = false;
     private boolean isBannerEnabled = true;
     private boolean isBannerNativeEnabled = false;
+    private boolean isHighImpactEnabled = false;
     private String extInvCode;
     private float reserve = 0.00f;
     private String age;
@@ -108,17 +106,12 @@ public class UTRequestParameters {
     private static final boolean TAG_ASSET_URL_VALUE = false;
     private static final String TAG_CODE = "code";
     private static final String TAG_UUID = "uuid";
-    private static final String EXTERNAL_IDS = "eids";
-    private static final String EXTERNALID_SOURCE = "source";
-    private static final String EXTERNALID_ID = "id";
-    private static final String EXTERNALID_RTI_PARTNER = "rti_partner";
-    private static final String EXTERNALID_RTI_PARTNER_UID2 = "UID2";
-    private static final String EXTERNALID_RTI_PARTNER_TDID = "TDID";
-    private static final String EXTERNALID_SOURCE_LIVERAMP = "liveramp.com";
-    private static final String EXTERNALID_SOURCE_NETID = "netid.de";
-    private static final String EXTERNALID_SOURCE_CRITEO = "criteo.com";
-    private static final String EXTERNALID_SOURCE_THETRADEDESK = "adserver.org";
-    private static final String EXTERNALID_SOURCE_UID2 = "uidapi.com";
+    private static final String EXTENDED_IDS = "eids";
+    private static final String EXTENDEDID_SOURCE = "source";
+    private static final String EXTENDEDID_ID = "id";
+    private static final String EXTENDEDID_RTI_PARTNER = "rti_partner";
+    private static final String EXTENDEDID_RTI_PARTNER_UID2 = "UID2";
+    private static final String EXTENDEDID_RTI_PARTNER_TDID = "TDID";
     private static final String USER = "user";
     private static final String USER_AGE = "age";
     private static final String USER_GENDER = "gender";
@@ -179,10 +172,16 @@ public class UTRequestParameters {
 
     private static final String US_PRIVACY = "us_privacy";
 
+    // GPP
+    private static final String PRIVACY = "privacy";
+    private static final String GPP_SID = "gpp_sid";
+    private static final String GPP = "gpp";
+
 
     private static final int ALLOWED_TYPE_BANNER = 1;
     private static final int ALLOWED_TYPE_INTERSTITIAL = 3;
     private static final int ALLOWED_TYPE_VIDEO = 4;
+    private static final int ALLOWED_TYPE_HIGH_IMPACT = 11;
     private static final int ALLOWED_TYPE_NATIVE = 12;
     private static final String os = "android";
 
@@ -274,23 +273,6 @@ public class UTRequestParameters {
         return adSizes;
     }
 
-    /**
-     * @deprecated Use setClickThroughAction instead
-     * Refer {@link ANClickThroughAction}
-     */
-    public void setOpensNativeBrowser(boolean opensNativeBrowser) {
-        setClickThroughAction(opensNativeBrowser ? ANClickThroughAction.OPEN_DEVICE_BROWSER : ANClickThroughAction.OPEN_SDK_BROWSER);
-    }
-
-    /**
-     * @deprecated Use getClickThroughAction instead
-     * Refer {@link ANClickThroughAction}
-     */
-    public boolean getOpensNativeBrowser() {
-        return (getClickThroughAction() == ANClickThroughAction.OPEN_DEVICE_BROWSER);
-    }
-
-
     public ANClickThroughAction getClickThroughAction() {
         return clickThroughAction;
     }
@@ -329,16 +311,6 @@ public class UTRequestParameters {
 
     public AdView.GENDER getGender() {
         return gender;
-    }
-
-    @Deprecated
-    public String getExternalUid() {
-        return externalUid;
-    }
-
-    @Deprecated
-    public void setExternalUid(String externalUid) {
-        this.externalUid = externalUid;
     }
 
     public int getVideoAdMinDuration() {
@@ -452,7 +424,7 @@ public class UTRequestParameters {
      */
 
     public TargetingParameters getTargetingParameters() {
-        return new TargetingParameters(age, gender, customKeywords, SDKSettings.getLocation(), externalUid);
+        return new TargetingParameters(age, gender, customKeywords, SDKSettings.getLocation());
     }
 
     private String getFacebookBidderToken(Context context) {
@@ -526,7 +498,7 @@ public class UTRequestParameters {
 
             JSONArray eidArray = getExternalUserIdArray();
             if (eidArray != null && eidArray.length() > 0) {
-                postData.put(EXTERNAL_IDS, eidArray);
+                postData.put(EXTENDED_IDS, eidArray);
             }
 
             // add device
@@ -597,6 +569,12 @@ public class UTRequestParameters {
                 postData.put(GDPR_CONSENT, gdprConsent);
             }
 
+            // add GDPR Consent
+            JSONObject privacy = getPrivacyObject();
+            if (privacy != null && privacy.length() > 0) {
+                postData.put(PRIVACY, privacy);
+            }
+
             // add IAB Support Signal
 
             if (SDKSettings.getOMEnabled()) {
@@ -618,8 +596,24 @@ public class UTRequestParameters {
         } catch (JSONException e) {
             Clog.e(Clog.httpReqLogTag, "JSONException: " + e.getMessage());
         }
-        Clog.i(Clog.httpReqLogTag, "POST data: " + postData.toString());
+        Clog.d(Clog.httpReqLogTag, "POST data: " + postData.toString());
         return postData.toString();
+    }
+
+    private JSONObject getPrivacyObject() {
+        JSONObject privacyObject = new JSONObject();
+        try {
+            Context context = this.getContext();
+            if (context != null) {
+                JSONArray gppSidArray = ANGPPSettings.getIabGppSIDArray(context);
+                if (gppSidArray != null) {
+                    privacyObject.put(GPP, ANGPPSettings.getIabGppString(context));
+                    privacyObject.put(GPP_SID, gppSidArray);
+                }
+            }
+        } catch (JSONException e) {
+        }
+        return privacyObject;
     }
 
     private JSONObject getGeoOverride() {
@@ -731,6 +725,12 @@ public class UTRequestParameters {
                             tag.put(VIDEO_FRAMEWORKS, omidFrameworksValue);
                         }
                     }
+                    if (utRequestParameters.isHighImpactEnabled) {
+                        allowedMediaAdTypes.put(ALLOWED_TYPE_HIGH_IMPACT);
+                        if(!utRequestParameters.isBannerEnabled && SDKSettings.getOMEnabled()) {
+                            tag.put(BANNER_FRAMEWORKS, omidFrameworksValue);
+                        }
+                    }
                     if (utRequestParameters.isBannerNativeEnabled) {
                         allowedMediaAdTypes.put(ALLOWED_TYPE_NATIVE);
                         if(SDKSettings.getOMEnabled()) {
@@ -840,8 +840,6 @@ public class UTRequestParameters {
 
             if(!StringUtil.isEmpty(Settings.getSettings().publisherUserId)){
                 user.put(USER_EXTERNALUID, Settings.getSettings().publisherUserId);
-            } else if (!StringUtil.isEmpty(utRequestParameters.getExternalUid())) {
-                user.put(USER_EXTERNALUID, utRequestParameters.getExternalUid());
             }
 
             if(Settings.getSettings().doNotTrack){
@@ -856,32 +854,15 @@ public class UTRequestParameters {
     private JSONArray getExternalUserIdArray() {
         JSONArray idArray = new JSONArray();
         try {
-            if (Settings.getSettings().externalUserIds != null) {
-                for (Map.Entry<ANExternalUserIdSource, String> entry : Settings.getSettings().externalUserIds.entrySet()) {
+            if (Settings.getSettings().userIds != null) {
+                for (ANUserId userID : Settings.getSettings().userIds) {
                     JSONObject idObject = new JSONObject();
-                    switch (entry.getKey()) {
-                        case THE_TRADE_DESK:
-                            idObject.put(EXTERNALID_SOURCE, EXTERNALID_SOURCE_THETRADEDESK);
-                            idObject.put(EXTERNALID_ID, entry.getValue());
-                            idObject.put(EXTERNALID_RTI_PARTNER, EXTERNALID_RTI_PARTNER_TDID);
-                            break;
-                        case CRITEO:
-                            idObject.put(EXTERNALID_SOURCE, EXTERNALID_SOURCE_CRITEO);
-                            idObject.put(EXTERNALID_ID, entry.getValue());
-                            break;
-                        case NETID:
-                            idObject.put(EXTERNALID_SOURCE, EXTERNALID_SOURCE_NETID);
-                            idObject.put(EXTERNALID_ID, entry.getValue());
-                            break;
-                        case LIVERAMP:
-                            idObject.put(EXTERNALID_SOURCE, EXTERNALID_SOURCE_LIVERAMP);
-                            idObject.put(EXTERNALID_ID, entry.getValue());
-                            break;
-                        case UID2:
-                            idObject.put(EXTERNALID_SOURCE, EXTERNALID_SOURCE_UID2);
-                            idObject.put(EXTERNALID_ID, entry.getValue());
-                            idObject.put(EXTERNALID_RTI_PARTNER, EXTERNALID_RTI_PARTNER_UID2);
-                            break;
+                    idObject.put(EXTENDEDID_SOURCE, userID.getSource());
+                    idObject.put(EXTENDEDID_ID, userID.getUserId());
+                    if(userID.getSource().equalsIgnoreCase(ANUserId.EXTENDEDID_SOURCE_THETRADEDESK)){
+                        idObject.put(EXTENDEDID_RTI_PARTNER, EXTENDEDID_RTI_PARTNER_TDID);
+                    }else if(userID.getSource().equalsIgnoreCase(ANUserId.EXTENDEDID_SOURCE_UID2)) {
+                        idObject.put(EXTENDEDID_RTI_PARTNER, EXTENDEDID_RTI_PARTNER_UID2);
                     }
                     idArray.put(idObject);
                 }
@@ -1044,7 +1025,7 @@ public class UTRequestParameters {
             Settings.getSettings().deviceAccessAllowed = ANGDPRSettings.canIAccessDeviceData(context);
 
             if (Settings.getSettings().deviceAccessAllowed && !SDKSettings.isAAIDUsageDisabled() && !Settings.getSettings().doNotTrack) {
-                if (!StringUtil.isEmpty(Settings.getSettings().aaid)) {
+                if (!StringUtil.isEmpty(Settings.getSettings().aaid) && !Settings.getSettings().aaid.equalsIgnoreCase("00000000-0000-0000-0000-000000000000")) {
                     JSONObject device_id = new JSONObject();
                     device_id.put(DEVICE_ID_AAID, Settings.getSettings().aaid);
                     device.put(DEVICE_DEVICE_ID, device_id);
@@ -1179,14 +1160,14 @@ public class UTRequestParameters {
     }
 
     /**
-     * @deprecated rendererId is not used anymore
+     * Set the Renderer id for the AdUnit associated with this UtRequestParameter object
      */
     public void setRendererId(int rendererId) {
         this.rendererId = rendererId;
     }
 
     /**
-     * @deprecated rendererId is not used anymore
+     * Get the Renderer id for the AdUnit associated with this UtRequestParameter object
      */
     public int getRendererId() {
         return rendererId;
@@ -1229,5 +1210,13 @@ public class UTRequestParameters {
 
     public void setPublisherId(int publisherId) {
         this.publisherId = publisherId;
+    }
+
+    public boolean isHighImpactEnabled() {
+        return isHighImpactEnabled;
+    }
+
+    public void setHighImpactEnabled(boolean highImpactEnabled) {
+        isHighImpactEnabled = highImpactEnabled;
     }
 }

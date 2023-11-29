@@ -1,6 +1,7 @@
 #import "RCTAppNexusVideoBannerView.h"
 #import <AppNexusSDK/ANSDKSettings.h>
 #import "RCTAppNexusUtils.h"
+#import <AppNexusSDK/XandrAd.h>
 
 #if __has_include(<React/RCTBridgeModule.h>)
 #import <React/RCTBridgeModule.h>
@@ -103,6 +104,13 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
 }
 
 - (void)createAdVideoBanner {
+    [[XandrAd sharedInstance] initWithMemberID: [_placementId intValue] preCacheRequestObjects:YES completionHandler:^(BOOL success){
+                                  if(success){
+                                    NSLog(@"Completion is called with status success ");
+                                  }else{
+                                    NSLog(@"Completion is called with status failed ");
+                                  }
+                              }];
     if (_isLoaded){
         return;
     }
@@ -240,7 +248,6 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
         _onAdLoadSuccess(@{
                            @"width": [NSNumber numberWithUnsignedInt:size.width],
                            @"height": [NSNumber numberWithUnsignedInt:size.height],
-                           @"creativeId": [ad creativeId],
                            });
     }
 }

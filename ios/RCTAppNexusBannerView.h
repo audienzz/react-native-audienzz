@@ -5,7 +5,7 @@
 #endif
 
 #import <AppNexusSDK/ANBannerAdView.h>
-#import <AppNexusSDK/ANVideoAdPlayer.h>
+#import "ANVideoAdPlayer.h"
 
 @class RCTBridge;
 @class RCTAppNexusBannerView;

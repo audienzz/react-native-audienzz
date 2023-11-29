@@ -72,6 +72,7 @@ public class AdFetcher {
 
     public void destroy() {
         if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
             String threadName = handler.getLooper().getThread().getName();
             if (threadName.contains(ANBACKGROUND)) {
                 Clog.i(Clog.baseLogTag, "Quitting background " + threadName);
@@ -108,16 +109,20 @@ public class AdFetcher {
     }
 
     public void start() {
+        if (!XandrAd.isInitialised()) {
+            XandrAd.throwUninitialisedException();
+        }
+        Clog.logTime(getClass().getSimpleName() + " - start");
         initHandler();
         Clog.d(Clog.baseLogTag, Clog.getString(R.string.start));
-        createTasker();
         switch (state) {
             case STOPPED:
                 if (this.period <= 0) {
                     Clog.v(Clog.baseLogTag,
                             Clog.getString(R.string.fetcher_start_single));
                     // Request an ad once
-                    tasker.schedule(new MessageRunnable(), 0, TimeUnit.SECONDS);
+                    // Client suggested change to not schedule an executor for SINGLE_REQUEST case, instead directly request the Ad.
+                    requestAd();
                     state = STATE.SINGLE_REQUEST;
                 } else {
                     Clog.v(Clog.baseLogTag, Clog.getString(R.string.fetcher_start_auto));
@@ -134,6 +139,7 @@ public class AdFetcher {
 
                     Clog.v(Clog.baseLogTag, Clog.getString(
                             R.string.request_delayed_by_x_ms, stall));
+                    createTasker();
                     tasker.scheduleAtFixedRate(new MessageRunnable(), stall,
                             msPeriod, TimeUnit.MILLISECONDS);
 
@@ -144,12 +150,20 @@ public class AdFetcher {
                 Clog.v(Clog.baseLogTag,
                         Clog.getString(R.string.fetcher_start_single));
                 // Request an ad once
-                tasker.schedule(new MessageRunnable(), 0, TimeUnit.SECONDS);
+                // Client suggested change to not schedule an executor for SINGLE_REQUEST case, instead directly request the Ad.
+                requestAd();
                 break;
             case AUTO_REFRESH:
                 // if auto refresh has already started
                 // prevent loading again if start() gets called twice in a row
                 break;
+        }
+    }
+
+    private void requestAd(){
+        Clog.v(Clog.baseLogTag,Clog.getString(R.string.handler_message_pass));
+        if(handler!=null) {
+            handler.sendEmptyMessage(0);
         }
     }
 
@@ -196,14 +210,8 @@ public class AdFetcher {
 
         @Override
         public void run() {
-            Clog.v(Clog.baseLogTag,
-                    Clog.getString(R.string.handler_message_pass));
-            if(handler != null) {
-                handler.sendEmptyMessage(0);
-            }
-
+            requestAd();
         }
-
     }
 
     // Create a handler which will receive the AsyncTasks and spawn them from

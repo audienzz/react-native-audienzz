@@ -1,13 +1,7 @@
-import React, { FC, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleProp,
-} from 'react-native';
-import { styles } from '../../constants';
-import { MODES } from '../../constants/values';
+import React, {FC, useState} from 'react';
+import {View, Text, TextInput, TouchableOpacity, StyleProp} from 'react-native';
+import {styles} from '../../constants';
+import {MODES} from '../../constants/values';
 
 const TextInputWithButton: FC<Props> = ({
   id,

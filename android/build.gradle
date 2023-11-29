@@ -64,7 +64,5 @@ repositories {
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'src/main/sdk/libs')
     implementation 'com.facebook.react:react-native:+'
-
-   
     implementation 'com.squareup.okhttp:mockwebserver:2.7.5'
 }

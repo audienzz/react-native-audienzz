@@ -1,10 +1,10 @@
-import React, { FC, useEffect, useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
-import { connect } from 'react-redux';
+import React, {FC, useEffect, useState} from 'react';
+import {View, Text, ScrollView} from 'react-native';
+import {connect} from 'react-redux';
 import FastImage from 'react-native-fast-image';
-import { AppNexusBanner } from 'react-native-audienzz';
-import { styles } from '../../constants';
-import { ITEM_TYPES, itemBanner } from '../../constants/values';
+import {AppNexusBanner} from 'react-native-audienzz';
+import {styles} from '../../constants';
+import {ITEM_TYPES, itemBanner} from '../../constants/values';
 
 type State = {
   placementIdBanner: string;
@@ -45,7 +45,7 @@ const FlatListItemScreen: FC<Props> = ({
         <View style={styles.itemItem}>
           {item.type === ITEM_TYPES.TEXT_WITH_IMAGE && (
             <FastImage
-              source={{ uri: item.image }}
+              source={{uri: item.image}}
               resizeMode={FastImage.resizeMode.cover}
               style={styles.itemImageItem}
             />
@@ -56,8 +56,7 @@ const FlatListItemScreen: FC<Props> = ({
               item.type === ITEM_TYPES.TEXT
                 ? styles.itemTitleLabelNoImagItem
                 : null,
-            ]}
-          >
+            ]}>
             {item.title}
           </Text>
           <Text style={styles.itemDescriptionLabelItem}>

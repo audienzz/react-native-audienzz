@@ -1,8 +1,8 @@
-import React, { FC, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
-import { styles } from '../constants';
-import { DEMO_ITEMS, PLACEMENT_ID_TYPES } from '../constants/values';
+import React, {FC, useEffect} from 'react';
+import {View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import {connect} from 'react-redux';
+import {styles} from '../constants';
+import {DEMO_ITEMS, PLACEMENT_ID_TYPES} from '../constants/values';
 import TextInputWithButton from '../components/ui/TextInputWithButton';
 import {
   RootState,
@@ -40,8 +40,7 @@ const DemoItemsList: FC<Props> = ({
       <TouchableOpacity
         key={idx}
         style={styles.itemContainer}
-        onPress={() => onItemPressHandler(item.screen)}
-      >
+        onPress={() => onItemPressHandler(item.screen)}>
         <Text>{item.title}</Text>
       </TouchableOpacity>
     ));

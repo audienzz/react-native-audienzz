@@ -151,6 +151,7 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
     _bannerView.translatesAutoresizingMaskIntoConstraints = NO;
     _bannerView.delegate = self;
     _bannerView.rootViewController = rootViewController;
+    _bannerView.clickThroughAction = ANClickThroughActionOpenDeviceBrowser;
 
     _bannerView.shouldAllowVideoDemand = _allowVideo;
 

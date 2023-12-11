@@ -613,66 +613,10 @@ class AdWebView extends WebView implements Displayable,
 
     // handles browser logic for shouldOverrideUrl
     boolean loadURLInCorrectBrowser(String url) {
-        if (adView.getClickThroughAction() == ANClickThroughAction.OPEN_SDK_BROWSER) {
-
-            Clog.d(Clog.baseLogTag, Clog.getString(R.string.opening_inapp));
-
-            //If it's a direct URL to the play store, just open it.
-            if (checkForApp(url)) {
-                return true;
-            }
-
-
-            //If it's an invalid http url return without loading it.
-            if (!isValidUrl(url)) {
-                return false;
-            }
-
-            try {
-
-                final WebView out;
-                // Unless disabled by the user, handle redirects in background
-
-                if (adView.getLoadsInBackground()) {
-                    // Otherwise, create an invisible 1x1 webview to load the landing
-                    // page and detect if we're redirecting to a market url
-                    out = new RedirectWebView(this.getContext());
-                    out.loadUrl(url);
-                    out.setVisibility(View.GONE);
-                    adView.addView(out);
-
-                    if (this.adView.getShowLoadingIndicator()) {
-                        //Show a dialog box
-                        progressDialog = new ProgressDialog(this.getContextFromMutableContext());
-                        progressDialog.setCancelable(true);
-                        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialogInterface) {
-                                out.stopLoading();
-                            }
-                        });
-                        progressDialog.setMessage(getContext().getResources().getString(R.string.loading));
-                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        progressDialog.show();
-                    }
-                } else {
-                    // Stick the URL directly into the new activity.
-                    out = new WebView(new MutableContextWrapper(getContext()));
-                    WebviewUtil.setWebViewSettings(out);
-                    out.loadUrl(url);
-                    openInAppBrowser(out);
-                }
-            } catch (Exception e) {
-                // Catches PackageManager$NameNotFoundException for webview
-                Clog.e(Clog.baseLogTag, "Exception initializing the redirect webview: " + e.getMessage());
-                return false;
-            }
-        } else if (adView.getClickThroughAction() == ANClickThroughAction.OPEN_DEVICE_BROWSER) {
-            Clog.d(Clog.baseLogTag,
-                    Clog.getString(R.string.opening_native));
-            openNativeIntent(url);
-            triggerBrowserLaunchEvent();
-        }
+        Clog.d(Clog.baseLogTag,
+        Clog.getString(R.string.opening_native));
+        openNativeIntent(url);
+        triggerBrowserLaunchEvent();
         return true;
     }
 

@@ -19,6 +19,7 @@
 @property (nonatomic) NSDictionary *keywords;
 @property (nonatomic) BOOL shouldResizeAdToFitContainer;
 @property (nonatomic) BOOL allowVideo;
+@property (nonatomic) BOOL openDeviceBrowser;
 @property (nonatomic) NSNumber *reactTag;
 @property (nonatomic) NSString *bannerVisible;
 @property (nonatomic) NSString *customUserAgent;

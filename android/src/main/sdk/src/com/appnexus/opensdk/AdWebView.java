@@ -613,6 +613,15 @@ class AdWebView extends WebView implements Displayable,
 
     // handles browser logic for shouldOverrideUrl
     boolean loadURLInCorrectBrowser(String url) {
+      //If it's a direct URL to the play store, just open it.
+        if (checkForApp(url)) {
+            return true;
+        }
+
+        //If it's an invalid http url return without loading it.
+        if (!isValidUrl(url)) {
+            return false;
+        }
         Clog.d(Clog.baseLogTag,
         Clog.getString(R.string.opening_native));
         openNativeIntent(url);

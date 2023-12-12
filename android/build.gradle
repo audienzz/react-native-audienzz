@@ -2,13 +2,12 @@ buildscript {
     if (project == rootProject) {
         repositories {
             mavenCentral()
-            jcenter()
             maven {
                 url 'https://maven.google.com/'
                 name 'Google'
             }
             maven {
-                url 'http://cdn.adnxs.com/anx-sdk/maven'
+                url 'https://cdn.adnxs.com/anx-sdk/maven'
             }
         }
 

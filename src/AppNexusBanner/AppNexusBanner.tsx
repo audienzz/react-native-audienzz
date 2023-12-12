@@ -43,6 +43,7 @@ export type AppNexusBannerProps = {
   onAdLoadFail?: (event: string | undefined) => void;
   onEventChange?: (event: string | undefined) => void;
   allowVideo?: boolean;
+  openDeviceBrowser?: boolean;
   reloadOnAppStateChangeIfFailed?: boolean;
   onAdVisibleChange?: (event: number | undefined) => void;
   customUserAgent?: string | undefined;
@@ -59,6 +60,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
   onAdLoadFail,
   onEventChange,
   allowVideo,
+  openDeviceBrowser,
   reloadOnAppStateChangeIfFailed,
   onAdVisibleChange,
   customUserAgent,
@@ -270,6 +272,7 @@ export const AppNexusBanner: React.FC<AppNexusBannerProps> = ({
       <RCTAppNexusBanner
         {...props}
         allowVideo={allowVideo}
+        openDeviceBrowser={openDeviceBrowser}
         placementId={placementId}
         sizes={sizes}
         autoRefreshInterval={autoRefreshInterval}

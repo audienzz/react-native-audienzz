@@ -34,6 +34,7 @@ const SimpleBannerScreen: FC<Props> = ({ navigation, placementIdBanner }) => {
             environment: 'test',
           }}
           allowVideo
+          openDeviceBrowser
           onAdLoadSuccess={() => console.log(`Loaded!`)}
           onAdLazyLoadSuccess={() => console.log(`Lazy loaded!`)}
           onAdLoadFail={() => {

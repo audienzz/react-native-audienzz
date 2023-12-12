@@ -136,6 +136,15 @@ class RTCAppNexusBannerManager extends ViewGroupManager<RTCAppNexusBannerView> {
         }
     }
 
+    @ReactProp(name="openDeviceBrowser")
+    public void setOpenDeviceBrowser(final RTCAppNexusBannerView bannerView, boolean openDeviceBrowser) {
+        RTCAppNexusBanner banner = (RTCAppNexusBanner) bannerView.getChildAt(0);
+        if (banner != null) {
+            banner.setClickThroughAction(openDeviceBrowser == true ?
+              ANClickThroughAction.OPEN_DEVICE_BROWSER : ANClickThroughAction.OPEN_SDK_BROWSER);
+        }
+    }
+
     @ReactProp(name = "autoRefreshInterval", defaultInt = 60)
     public void setAutoRefreshInterval(final RTCAppNexusBannerView bannerView, int interval) {
         RTCAppNexusBanner banner = (RTCAppNexusBanner) bannerView.getChildAt(0);

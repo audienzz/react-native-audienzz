@@ -5635,10 +5635,8 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-native-audienzz@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/react-native-audienzz/-/react-native-audienzz-0.5.2.tgz#4f775bb3c7298109b91dacfcd1ccdf419c2d6c52"
-  integrity sha512-SnsBp4aabjjTRRUzM5MM4eDI85HprFVQUrcoQ4j+rSyAuwz7+2VNxWYEYhCIzzyWr4Uzt6ZN9tI56vdUz4nCJQ==
+react-native-audienzz@../:
+  version "0.5.4"
 
 react-native-fast-image@^8.6.3:
   version "8.6.3"

@@ -153,6 +153,12 @@ typedef NS_ENUM(NSInteger, ANInstreamVideoEventType)
     _bannerView.rootViewController = rootViewController;
 
     _bannerView.shouldAllowVideoDemand = _allowVideo;
+    
+    if (_openDeviceBrowser == YES) {
+        _bannerView.clickThroughAction = ANClickThroughActionOpenDeviceBrowser;
+    } else {
+        _bannerView.clickThroughAction = ANClickThroughActionOpenSDKBrowser;
+    }
 
     _bannerView.adSizes = [self toCGSizes: _sizes];
     _bannerView.autoRefreshInterval = _autoRefreshInterval;

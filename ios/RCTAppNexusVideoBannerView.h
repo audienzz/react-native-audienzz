@@ -17,6 +17,7 @@
 @property (nonatomic) NSArray *sizes;
 @property (nonatomic) NSDictionary *keywords;
 @property (nonatomic) BOOL shouldResizeAdToFitContainer;
+@property (nonatomic) BOOL openDeviceBrowser;
 @property (nonatomic) NSNumber *reactTag;
 @property (nonatomic) NSString *customUserAgent;
 @property (nonatomic) NSInteger * _Nullable percentVisibility;

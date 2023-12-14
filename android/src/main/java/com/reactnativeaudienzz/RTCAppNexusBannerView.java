@@ -52,7 +52,6 @@ class RTCAppNexusBannerView extends ReactViewGroup {
     banner.setResizeAdToFitContainer(true);
     banner.enableNativeRendering(true);
     banner.enableLazyLoad();
-    banner.setClickThroughAction(ANClickThroughAction.OPEN_SDK_BROWSER);
     banner.setIsVisible(Constants.BANNER_NOT_VISIBLE);
   }
 
